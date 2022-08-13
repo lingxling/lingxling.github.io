@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hexo + NexT 搭建个人博客</title>
+    <url>/2022/63969/</url>
+    <content><![CDATA[<h1 id="1-主要安装步骤"><a href="#1-主要安装步骤" class="headerlink" title="1 主要安装步骤"></a>1 主要安装步骤</h1><h2 id="1-1-创建github仓库"><a href="#1-1-创建github仓库" class="headerlink" title="1.1 创建github仓库"></a>1.1 创建github仓库</h2><p>仓库命名：[username].github.io</p>
+<h2 id="1-2-安装博客框架Hexo"><a href="#1-2-安装博客框架Hexo" class="headerlink" title="1.2 安装博客框架Hexo"></a>1.2 安装博客框架Hexo</h2><p><a href="https://hexo.io/zh-cn/docs/">Hexo安装文档</a>。在站点配置文件中，deploy字段修改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: git@github.com:[username]/[username].github.io.git</span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>url字段修改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://[username].github.io</span><br></pre></td></tr></table></figure>
+
+<p>根据需要修改博客信息：author，title，subtitle等字段。</p>
+<h2 id="1-3-下载博客主题NexT"><a href="#1-3-下载博客主题NexT" class="headerlink" title="1.3 下载博客主题NexT"></a>1.3 下载博客主题NexT</h2><p><a href="https://github.com/theme-next/hexo-theme-next">NexT安装</a><br>下载完成后，打开站点配置文件，找到theme字段，并将其值更改为next。在官方文档里有对使用NexT的教程，虽然这个教程似乎很久没更新过，但是基本步骤还是差不多的。</p>
+<p>完成以上步骤后，hexo cl &amp;&amp; hexo g &amp;&amp; hexo s三连生成页面并在本地预览，hexo d将页面发布到[username].github.io.</p>
+<h1 id="2-功能配置"><a href="#2-功能配置" class="headerlink" title="2 功能配置"></a>2 功能配置</h1><p>以下为可选功能，不是必须。</p>
+<h2 id="2-1-评论功能"><a href="#2-1-评论功能" class="headerlink" title="2.1 评论功能"></a>2.1 评论功能</h2><p>gitment似乎不能用了，但是好在NexT已经支持gitalk，问题不大。教程详见gitalk评论系统。</p>
+<h2 id="2-2-站内搜索功能"><a href="#2-2-站内搜索功能" class="headerlink" title="2.2 站内搜索功能"></a>2.2 站内搜索功能</h2><p>详见<a href="https://theme-next.iissnan.com/third-party-services.html#search-system">第三方服务集成</a>中Local Search部分。</p>
+<h2 id="2-3-数学公式"><a href="#2-3-数学公式" class="headerlink" title="2.3 数学公式"></a>2.3 数学公式</h2><p><a href="https://blog.csdn.net/ssjdoudou/article/details/103318019">Hexo-next主题支持数学公式</a></p>
+<h2 id="2-4-版权信息"><a href="#2-4-版权信息" class="headerlink" title="2.4 版权信息"></a>2.4 版权信息</h2><p>在<code>主题配置文件</code>中修改：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">creative_commons:</span><br><span class="line">  license: by-nc-sa</span><br><span class="line">  sidebar: false</span><br><span class="line">  post: true</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-5-永久链接"><a href="#2-5-永久链接" class="headerlink" title="2.5 永久链接"></a>2.5 永久链接</h2><p><a href="https://www.jianshu.com/p/c7de2ae59975">Hexo-abbrlink生成唯一永久文章链接</a>。但是按照这个教程修改站点配置文件的permalink字段好像没用，我按下面修改是有用的：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">permalink: :year/:abbrlink/</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-6-统计信息"><a href="#2-6-统计信息" class="headerlink" title="2.6 统计信息"></a>2.6 统计信息</h2><p>我用的是不蒜子，优势是不需要注册，提供博客阅读量和访问人数数据。在主题配置文件里找到busuanzi字段，直接修改即可。</p>
+<h2 id="2-7-搜索引擎抓取"><a href="#2-7-搜索引擎抓取" class="headerlink" title="2.7 搜索引擎抓取"></a>2.7 搜索引擎抓取</h2><p>可以参考这篇<a href="https://blog.csdn.net/fzhhsa/article/details/89839885">hexo个人博客收录谷歌</a>。</p>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>博客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何在电脑上操作手机</title>
+    <url>/2022/8240/</url>
+    <content><![CDATA[<blockquote>
+<p>手机进了水，能开机，想把手机上的资料都备份一下。但是因为屏幕花了看得很吃力、不方便，所以打算在电脑上操作手机。</p>
+</blockquote>
+<p>参考1：<a href="https://www.zhihu.com/question/46795475/answer/869985800">如何在电脑上控制手机上所有的app软件操作？ - 张脑湿的回答 - 知乎</a></p>
+<span id="more"></span>
+<p>参考2：<a href="https://jingyan.baidu.com/article/08b6a591a3658955a80922ad.html">小米手机开发者模式怎么打开</a><br>参考3：<a href="https://blog.csdn.net/qq_50082325/article/details/121696514">Scrcpy投屏神器基本使用</a></p>
+<h1 id="1-开启小米手机的开发者模式"><a href="#1-开启小米手机的开发者模式" class="headerlink" title="1 开启小米手机的开发者模式"></a>1 开启小米手机的开发者模式</h1><ul>
+<li>设置 -&gt; 我的设备 -&gt; 全部参数 -&gt; MIUI 版本</li>
+<li>连续点击“MIUI 版本”，直到弹出提示“您现在处于开发者模式”</li>
+<li>设置 -&gt; 更多设置 -&gt; 开发者选项，允许“USB调试”和“USB调试（安全设置）”</li>
+</ul>
+<h1 id="2-下载scrcpy"><a href="#2-下载scrcpy" class="headerlink" title="2 下载scrcpy"></a>2 下载scrcpy</h1><ul>
+<li>scrcpy是一款开源免费投屏控制软件，项目地址见scrcpy</li>
+</ul>
+<h1 id="3-将手机投屏到电脑"><a href="#3-将手机投屏到电脑" class="headerlink" title="3 将手机投屏到电脑"></a>3 将手机投屏到电脑</h1><ul>
+<li>电脑开热点，然后手机连接电脑的热点，此时在电脑上可以看到手机的ip，等会需要用到这个ip。</li>
+<li>手机通过USB连接到电脑，在USB配置弹窗中选择“文件传输”</li>
+<li>在scrcpy目录中打开终端</li>
+<li>终端中执行命令adb tcpip [端口号]，例如adb tcpip 5555</li>
+<li>断开USB连接</li>
+<li>终端中执行命令adb connect [ip]: [端口号]，例如adb connect 192.168.137.10: 5555</li>
+<li>终端中执行命令scrcpy运行scrcpy软件</li>
+</ul>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>tips</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用树莓派3b搭建个人网盘</title>
+    <url>/2022/15837/</url>
+    <content><![CDATA[<blockquote>
+<p>在淘宝上花10块钱搞了一大堆电子书，打算用树莓派3b搞个个人网盘存起来。虽然网口速度不行，但是一本书也就2MB左右，问题不大。</p>
+</blockquote>
+<p>参考1：<a href="https://blog.csdn.net/lz_quiet/article/details/103651730">私有云搭建-owncloud</a></p>
+<span id="more"></span> 
+<p>参考2：<a href="https://central.owncloud.org/t/access-denied-to-mariadb-any-suggestions/2783/3">Access denied to MariaDB. Any suggestions?</a></p>
+<p>参考3：<a href="https://blog.chongyeye.com/?id=6">树莓派owncloud私有云挂载NTFS本地存储</a></p>
+<h1 id="1-更换软件源"><a href="#1-更换软件源" class="headerlink" title="1 更换软件源"></a>1 更换软件源</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo nano /etc/apt/sources.list</span><br><span class="line"></span><br><span class="line"># 注释掉原来的源</span><br><span class="line"># deb http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi</span><br><span class="line"># Uncomment line below then &#x27;apt-get update&#x27; to enable &#x27;apt-get source&#x27;</span><br><span class="line"># deb-src http://raspbian.raspberrypi.org/raspbian/ buster main contrib non-free rpi</span><br><span class="line"></span><br><span class="line"># 添加清华源</span><br><span class="line">deb https://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ stretch main contrib non-free rpi</span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-安装php"><a href="#2-安装php" class="headerlink" title="2 安装php"></a>2 安装php</h1><p>这里安装php不指明具体版本，直接安装默认版本，避免找不到对应版本的错误。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install php</span><br><span class="line">sudo apt-get install php-mysql php-zip php-xml php-intl php-mbstring php-gd php-curl</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-安装apache2"><a href="#3-安装apache2" class="headerlink" title="3 安装apache2"></a>3 安装apache2</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install apache2</span><br><span class="line"></span><br><span class="line"># 启动apache2</span><br><span class="line">systemctl restart apache2</span><br></pre></td></tr></table></figure>
+
+<h1 id="4-安装mariadb"><a href="#4-安装mariadb" class="headerlink" title="4 安装mariadb"></a>4 安装mariadb</h1><p>不知道为什么搜索不到mysql-server的源，按<a href="https://blog.csdn.net/lz_quiet/article/details/103651730">参考1</a>装了mariadb-server。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install mariadb-server</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-数据库管理"><a href="#5-数据库管理" class="headerlink" title="5 数据库管理"></a>5 数据库管理</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo mysql -uroot -p</span><br><span class="line"></span><br><span class="line">CREATE DATABASE IF NOT EXISTS owncloud;</span><br><span class="line">GRANT ALL PRIVILEGES ON owncloud.* TO &#x27;owncloudUser&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;123123&#x27;;</span><br></pre></td></tr></table></figure>
+<p>在mariadb执行完以上命令后，需要刷新再退出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">FLUSH PRIVILEGES;</span><br><span class="line">exit</span><br><span class="line"></span><br><span class="line"># 退出后重启服务</span><br><span class="line">systemctl restart mariadb</span><br></pre></td></tr></table></figure>
+
+<h1 id="6-安装owncloud"><a href="#6-安装owncloud" class="headerlink" title="6 安装owncloud"></a>6 安装owncloud</h1><p>按照<a href="https://blog.csdn.net/lz_quiet/article/details/103651730">参考1</a>执行。</p>
+<h1 id="7-挂载机械硬盘"><a href="#7-挂载机械硬盘" class="headerlink" title="7 挂载机械硬盘"></a>7 挂载机械硬盘</h1><p>主要参考了<a href="https://blog.chongyeye.com/?id=6">树莓派owncloud私有云挂载NTFS本地存储</a>。以下操作针对NTFS硬盘格式。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 安装NTFS-3G</span><br><span class="line">sudo apt-get install ntfs-3g</span><br><span class="line"></span><br><span class="line"># 查看硬盘是否被检测到</span><br><span class="line">fdisk -l</span><br><span class="line"></span><br><span class="line"># 创建目录，挂载硬盘</span><br><span class="line">sudo mkdir -p /media/owncloudData</span><br><span class="line">sudo mount -t ntfs-3g  /dev/sda1 /media/owncloudData</span><br><span class="line"></span><br><span class="line"># 在owncloud中开启本地存储</span><br><span class="line">sudo nano /var/www/html/owncloud/config/config.php</span><br><span class="line"></span><br><span class="line"># 在文档中添加一句</span><br><span class="line">&#x27;files_external_allow_create_new_local&#x27; =&gt; &#x27;true&#x27;,</span><br></pre></td></tr></table></figure>
+<p>之后，在owncloud的管理员setting中启用外置存储，完成。</p>
+<h1 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h1><ul>
+<li>树莓派直接给机械硬盘供电很吃力。</li>
+<li>没有公共IP，设备只有和树莓派处于同一个子网时才能访问。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>树莓派</tag>
+      </tags>
+  </entry>
+</search>
