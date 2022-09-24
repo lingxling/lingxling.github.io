@@ -39,7 +39,7 @@
     <content><![CDATA[<p>参考资料：</p>
 <ul>
 <li>课程官方网页：<a href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
-<li>教材xv6: a simple, Unix-like teaching operating system：<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>教材：<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
 <li>参考代码：<a href="http://doraemonzzz.com/tags/6-S081/">http://doraemonzzz.com/tags/6-S081/</a><span id="more"></span></li>
 </ul>
 <h1 id="0-配置实验环境"><a href="#0-配置实验环境" class="headerlink" title="0 配置实验环境"></a>0 配置实验环境</h1><ol>
