@@ -183,6 +183,171 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/35075/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="lxl">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lingxling's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/35075/" class="post-title-link" itemprop="url">MIT S.081 Lab1 Utilities（未完）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-09-24 14:43:08 / Modified: 15:17:29" itemprop="dateCreated datePublished" datetime="2022-09-24T14:43:08+08:00">2022-09-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>参考资料：</p>
+<ul>
+<li>课程官方网页：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
+<li>教材xv6: a simple, Unix-like teaching operating system：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>参考代码：<a target="_blank" rel="noopener" href="http://doraemonzzz.com/tags/6-S081/">http://doraemonzzz.com/tags/6-S081/</a></li>
+</ul>
+<h1 id="0-配置实验环境"><a href="#0-配置实验环境" class="headerlink" title="0 配置实验环境"></a>0 配置实验环境</h1><ol>
+<li>根据<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/tools.html">Tools Used in 6.S081</a>安装环境。</li>
+<li>安装好后，在shell运行<code>make qemu</code>进入qemu环境。</li>
+<li>同时按住<code>ctrl+a</code>然后松开，再按<code>x</code>可以退出qemu环境。</li>
+</ol>
+<h1 id="1-Boot-xv6-easy"><a href="#1-Boot-xv6-easy" class="headerlink" title="1 Boot xv6 (easy)"></a>1 Boot xv6 (easy)</h1><p>根据实验指示逐步执行即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git clone git://g.csail.mit.edu/xv6-labs-2021</span><br><span class="line">Cloning into &#x27;xv6-labs-2021&#x27;...</span><br><span class="line">...</span><br><span class="line">$ cd xv6-labs-2021</span><br><span class="line">$ git checkout util  # 这里我的默认分支下是空的，需要签出分支后才能看到代码</span><br><span class="line">$ make qemu # 进入qemu环境，并启动xv6系统</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-sleep-easy"><a href="#2-sleep-easy" class="headerlink" title="2 sleep (easy)"></a>2 sleep (easy)</h1><p>按照xv6教材和实验指示逐步执行即可。</p>
+<h1 id="3-pingpong-easy"><a href="#3-pingpong-easy" class="headerlink" title="3 pingpong (easy)"></a>3 pingpong (easy)</h1><p>这个实验的意思是，child进程通过pipe给parent进程发一个字符，parent进程输出字符。同样的，parent进程也要给child进程发一个字符，child进程输出字符。</p>
+<p>要注意的是，父子进程是通过同一个pipe通信的，因此要避免两个进程同时读或者同时写，可以先让parent进程写、child进程读，然后反过来。另外，parent必须等child进程结束后才能读，否则可能读到自己写的字符：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;kernel/types.h&quot;</span><br><span class="line">#include &quot;kernel/stat.h&quot;</span><br><span class="line">#include &quot;user/user.h&quot;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[]) &#123;</span><br><span class="line">    int p[2];</span><br><span class="line">    char buf[2];</span><br><span class="line">    pipe(p);</span><br><span class="line">    int pid = fork();</span><br><span class="line">    if (pid == 0) &#123; // child</span><br><span class="line">        if (read(p[0], buf, 1) != 1) &#123;</span><br><span class="line">            fprintf(2, &quot;Can&#x27;t read from parent!\n&quot;);</span><br><span class="line">            exit(1);</span><br><span class="line">        &#125;</span><br><span class="line">        close(p[0]);</span><br><span class="line"></span><br><span class="line">        fprintf(1, &quot;child receive: %c\n&quot;, buf[0]);</span><br><span class="line">        fprintf(1, &quot;%d: received ping\n&quot;, getpid());</span><br><span class="line"></span><br><span class="line">        if (write(p[1], &quot;b&quot;, 1) != 1) &#123;</span><br><span class="line">            fprintf(2, &quot;Can&#x27;t write to parent!\n&quot;);</span><br><span class="line">            exit(1);</span><br><span class="line">        &#125;</span><br><span class="line">        close(p[1]);</span><br><span class="line"></span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;  // parent</span><br><span class="line">        if (write(p[1], &quot;a&quot;, 1) != 1) &#123;</span><br><span class="line">            fprintf(2, &quot;Can&#x27;t write to child!\n&quot;);</span><br><span class="line">            exit(1);</span><br><span class="line">        &#125;</span><br><span class="line">        close(p[1]);  </span><br><span class="line"></span><br><span class="line">        wait(0); // 如果不等待子进程结束，可能读的是&quot;a&quot;</span><br><span class="line"></span><br><span class="line">        if (read(p[0], buf, 1) != 1) &#123;</span><br><span class="line">            fprintf(2, &quot;Can&#x27;t read from child!\n&quot;);</span><br><span class="line">            exit(1);</span><br><span class="line">        &#125;</span><br><span class="line">        close(p[0]);</span><br><span class="line"></span><br><span class="line">        fprintf(1, &quot;parent receive: %c\n&quot;, buf[0]);</span><br><span class="line">        fprintf(1, &quot;%d: received pong\n&quot;, getpid());</span><br><span class="line">        </span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="4-primes-moderate-x2F-hard"><a href="#4-primes-moderate-x2F-hard" class="headerlink" title="4 primes (moderate)&#x2F;(hard)"></a>4 primes (moderate)&#x2F;(hard)</h1><p>仔细看<img data-src="/../images/sieve.gif"></p>
+<h1 id="5-find-moderate"><a href="#5-find-moderate" class="headerlink" title="5 find (moderate)"></a>5 find (moderate)</h1><p>仔细阅读<code>ls.c</code>，适当修改</p>
+<h1 id="6-xargs-moderate"><a href="#6-xargs-moderate" class="headerlink" title="6 xargs (moderate)"></a>6 xargs (moderate)</h1>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/54146/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="lxl">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lingxling's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/54146/" class="post-title-link" itemprop="url">在知乎上尝试写小说的主观体验（持续更新）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-18 10:59:29" itemprop="dateCreated datePublished" datetime="2022-08-18T10:59:29+08:00">2022-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-09-24 14:48:53" itemprop="dateModified" datetime="2022-09-24T14:48:53+08:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">杂记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>费神</li>
+<li>费时间</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/15837/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -206,17 +371,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-08-13 22:59:45 / Modified: 23:41:16" itemprop="dateCreated datePublished" datetime="2022-08-13T22:59:45+08:00">2022-08-13</time>
+              <time title="Created: 2022-08-13 22:59:45" itemprop="dateCreated datePublished" datetime="2022-08-13T22:59:45+08:00">2022-08-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-18 11:00:42" itemprop="dateModified" datetime="2022-08-18T11:00:42+08:00">2022-08-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                  <a href="/categories/%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">杂记</span></a>
                 </span>
             </span>
 
@@ -284,17 +455,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-08-13 22:47:36 / Modified: 23:28:16" itemprop="dateCreated datePublished" datetime="2022-08-13T22:47:36+08:00">2022-08-13</time>
+              <time title="Created: 2022-08-13 22:47:36" itemprop="dateCreated datePublished" datetime="2022-08-13T22:47:36+08:00">2022-08-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-18 11:00:50" itemprop="dateModified" datetime="2022-08-18T11:00:50+08:00">2022-08-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                  <a href="/categories/%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">杂记</span></a>
                 </span>
             </span>
 
@@ -362,17 +539,23 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-08-13 22:38:16 / Modified: 23:26:15" itemprop="dateCreated datePublished" datetime="2022-08-13T22:38:16+08:00">2022-08-13</time>
+              <time title="Created: 2022-08-13 22:38:16" itemprop="dateCreated datePublished" datetime="2022-08-13T22:38:16+08:00">2022-08-13</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-18 11:00:56" itemprop="dateModified" datetime="2022-08-18T11:00:56+08:00">2022-08-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
+                  <a href="/categories/%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">杂记</span></a>
                 </span>
             </span>
 
@@ -480,20 +663,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
