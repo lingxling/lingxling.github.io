@@ -2,9 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lingxling.github.io/2022/35594/</loc>
+    
+    <lastmod>2022-10-17</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://lingxling.github.io/2022/35075/</loc>
     
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-16</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -58,7 +67,7 @@
 
   <url>
     <loc>https://lingxling.github.io/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -66,28 +75,28 @@
   
   <url>
     <loc>https://lingxling.github.io/tags/%E5%8D%9A%E5%AE%A2/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://lingxling.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://lingxling.github.io/tags/tips/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://lingxling.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -96,14 +105,14 @@
   
   <url>
     <loc>https://lingxling.github.io/categories/%E6%9D%82%E8%AE%B0/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2022-09-24</lastmod>
+    <lastmod>2022-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
