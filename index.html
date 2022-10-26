@@ -214,7 +214,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-26 19:53:12" itemprop="dateModified" datetime="2022-10-26T19:53:12+08:00">2022-10-26</time>
+                <time title="Modified: 2022-10-26 20:05:05" itemprop="dateModified" datetime="2022-10-26T20:05:05+08:00">2022-10-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -240,86 +240,14 @@
           <blockquote>
 <p>之前一直觉得vim难用，远远比不上vscode之类的编辑好用。最近在学Java后端开发，敲代码的时候居然感觉vim编辑器好像是方便一些，所以打算再复习一下。以下笔记仅供查阅。</p>
 </blockquote>
-<h1 id="1-基本操作"><a href="#1-基本操作" class="headerlink" title="1 基本操作"></a>1 基本操作</h1><h2 id="1-1-移动光标"><a href="#1-1-移动光标" class="headerlink" title="1.1 移动光标"></a>1.1 移动光标</h2><ul>
-<li>h 左移</li>
-<li>l 右移</li>
-<li>j 下移</li>
-<li>k 上移</li>
-</ul>
-<h2 id="1-2-删除、插入和添加"><a href="#1-2-删除、插入和添加" class="headerlink" title="1.2 删除、插入和添加"></a>1.2 删除、插入和添加</h2><ul>
-<li>x 删除</li>
-<li>a 在光标后插入</li>
-<li>A 行尾插入</li>
-<li>i 在光标前插入</li>
-<li>I 在行首插入</li>
-</ul>
-<h1 id="2-组合命令"><a href="#2-组合命令" class="headerlink" title="2 组合命令"></a>2 组合命令</h1><h2 id="2-1-删除操作和相关命令"><a href="#2-1-删除操作和相关命令" class="headerlink" title="2.1 删除操作和相关命令"></a>2.1 删除操作和相关命令</h2><ul>
-<li>de 删除当前字符到单词末尾</li>
-<li>dw 删除当前光标到下个单词之前的内容 </li>
-<li>d$ 删除本行光标之后的所有字符（包括光标指向的字符）</li>
-<li>dd 删除整行（实际上相当于剪切）</li>
-</ul>
-<h2 id="2-2-关于命令和对象"><a href="#2-2-关于命令和对象" class="headerlink" title="2.2 关于命令和对象"></a>2.2 关于命令和对象</h2><ul>
-<li>许多改变文本的命令都是由一个操作和一个对象构成：例如<code>d</code>表示delete，<code>w</code>表示<code>word</code>。</li>
-<li>在命令前加数字可以表示该命令重复的次数，例如<code>2dw</code>表示执行两次<code>dw</code>。</li>
-</ul>
-<h2 id="2-4-撤销类命令"><a href="#2-4-撤销类命令" class="headerlink" title="2.4 撤销类命令"></a>2.4 撤销类命令</h2><ul>
-<li>u 撤销最后执行的命令</li>
-<li>U 撤销对整行的修改</li>
-</ul>
-<h1 id="3-剪贴和修改"><a href="#3-剪贴和修改" class="headerlink" title="3 剪贴和修改"></a>3 剪贴和修改</h1><h2 id="3-1-剪贴"><a href="#3-1-剪贴" class="headerlink" title="3.1 剪贴"></a>3.1 剪贴</h2><ul>
-<li>dd 剪切整行</li>
-<li>p 粘贴</li>
-</ul>
-<h2 id="3-2-修改"><a href="#3-2-修改" class="headerlink" title="3.2 修改"></a>3.2 修改</h2><ul>
-<li>r 替换光标所在位置的字符</li>
-<li>cw 修改至单词末尾的文本</li>
-<li>ce 同上</li>
-<li>c$ 修改至行末的文本</li>
-</ul>
-<h1 id="4-定位、搜索和替换"><a href="#4-定位、搜索和替换" class="headerlink" title="4 定位、搜索和替换"></a>4 定位、搜索和替换</h1><h2 id="4-1-定位及文件状态"><a href="#4-1-定位及文件状态" class="headerlink" title="4.1 定位及文件状态"></a>4.1 定位及文件状态</h2><ul>
-<li>&lt;ctrl&gt;+g&#x2F;G 显示当前编辑的文件名和光标所在位置</li>
-<li>G 跳转到文件最后一行</li>
-<li>gg 跳转到文件第一行</li>
-<li>#n G 跳转到第n行</li>
-</ul>
-<h2 id="4-2-搜索"><a href="#4-2-搜索" class="headerlink" title="4.2 搜索"></a>4.2 搜索</h2><ul>
-<li>&#x2F;[target] 从前往后找</li>
-<li>?[target] 从后往前找</li>
-<li>n 下一个</li>
-<li>N 上一个</li>
-<li>% 将光标放在括号处，查找匹配的另一半括号</li>
-</ul>
-<h2 id="4-3-替换"><a href="#4-3-替换" class="headerlink" title="4.3 替换"></a>4.3 替换</h2><ul>
-<li>:s&#x2F;[old]&#x2F;[new] 只替换第一个匹配到的串</li>
-<li>:s&#x2F;[old]&#x2F;[new]&#x2F;g 替换全行的匹配串</li>
-<li>:#,#s&#x2F;[old]&#x2F;[new]&#x2F;g 替换指定两行之间出现的每个匹配串，其中#,#代表的是替换操作的若干行中首尾两行的行号。</li>
-<li>:%s&#x2F;[old]&#x2F;[new]&#x2F;g 替换整个文件中的每个匹配串</li>
-<li>:%s&#x2F;[old]&#x2F;[new]&#x2F;gc 找到个文件中的每个匹配串，并且对每个匹配串提示是否进行替换</li>
-</ul>
-<h1 id="5-执行外部命令和保存"><a href="#5-执行外部命令和保存" class="headerlink" title="5 执行外部命令和保存"></a>5 执行外部命令和保存</h1><h2 id="5-1-执行外部命令"><a href="#5-1-执行外部命令" class="headerlink" title="5.1 执行外部命令"></a>5.1 执行外部命令</h2><ul>
-<li>:![command] 可以执行外部命令，如<code>:!ls</code></li>
-</ul>
-<h2 id="5-2-保存和导入"><a href="#5-2-保存和导入" class="headerlink" title="5.2 保存和导入"></a>5.2 保存和导入</h2><ul>
-<li>:w [filename] 保存文件</li>
-<li>v进入visual模式，移动光标可以高亮部分文本，<code>:w [filename]</code>选择性保存文件</li>
-<li>:r [filename] 导入指定文件</li>
-</ul>
-<h1 id="6-更多的编辑命令"><a href="#6-更多的编辑命令" class="headerlink" title="6 更多的编辑命令"></a>6 更多的编辑命令</h1><h2 id="6-1-插入"><a href="#6-1-插入" class="headerlink" title="6.1 插入"></a>6.1 插入</h2><ul>
-<li>o 在光标的下方打开新的一行，并进入插入模式</li>
-<li>R 可连续替换多个字符</li>
-</ul>
-<h2 id="6-2-复制"><a href="#6-2-复制" class="headerlink" title="6.2 复制"></a>6.2 复制</h2><ul>
-<li>y 复制文本，使用这条命令要先用v进入visual模式，然后按y选中部分文本，最后按p粘贴文本</li>
-</ul>
-<h2 id="6-3-设置类命令"><a href="#6-3-设置类命令" class="headerlink" title="6.3 设置类命令"></a>6.3 设置类命令</h2><ul>
-<li>:set ic 忽略搜索target的大小写</li>
-<li>:set hls is 高亮搜索，输入的同时显示效果</li>
-<li>:set noic 禁用忽略大小写</li>
-<li>:nohlsearch 移除匹配项的高亮显示</li>
-<li>&#x2F;[target]\c 仅在一次查找时忽略大小写</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/19295/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

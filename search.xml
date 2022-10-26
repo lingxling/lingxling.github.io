@@ -230,6 +230,7 @@
     <content><![CDATA[<blockquote>
 <p>之前一直觉得vim难用，远远比不上vscode之类的编辑好用。最近在学Java后端开发，敲代码的时候居然感觉vim编辑器好像是方便一些，所以打算再复习一下。以下笔记仅供查阅。</p>
 </blockquote>
+<span id="more"></span>
 <h1 id="1-基本操作"><a href="#1-基本操作" class="headerlink" title="1 基本操作"></a>1 基本操作</h1><h2 id="1-1-移动光标"><a href="#1-1-移动光标" class="headerlink" title="1.1 移动光标"></a>1.1 移动光标</h2><ul>
 <li>h 左移</li>
 <li>l 右移</li>
