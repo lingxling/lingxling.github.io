@@ -12,9 +12,9 @@
 
 <p>根据需要修改博客信息：author，title，subtitle等字段。</p>
 <h2 id="1-3-下载博客主题NexT"><a href="#1-3-下载博客主题NexT" class="headerlink" title="1.3 下载博客主题NexT"></a>1.3 下载博客主题NexT</h2><p><a href="https://github.com/theme-next/hexo-theme-next">NexT安装</a><br>下载完成后，打开站点配置文件，找到theme字段，并将其值更改为next。在官方文档里有对使用NexT的教程，虽然这个教程似乎很久没更新过，但是基本步骤还是差不多的。</p>
-<p>完成以上步骤后，hexo cl &amp;&amp; hexo g &amp;&amp; hexo s三连生成页面并在本地预览，hexo d将页面发布到[username].github.io.</p>
+<p>完成以上步骤后，<code>hexo cl &amp;&amp; hexo g &amp;&amp; hexo s</code>三连生成页面并在本地预览，<code>hexo d</code>将页面发布到[username].github.io.</p>
 <h1 id="2-功能配置"><a href="#2-功能配置" class="headerlink" title="2 功能配置"></a>2 功能配置</h1><p>以下为可选功能，不是必须。</p>
-<h2 id="2-1-评论功能"><a href="#2-1-评论功能" class="headerlink" title="2.1 评论功能"></a>2.1 评论功能</h2><p>gitment似乎不能用了，但是好在NexT已经支持gitalk，问题不大。教程详见gitalk评论系统。</p>
+<h2 id="2-1-评论功能"><a href="#2-1-评论功能" class="headerlink" title="2.1 评论功能"></a>2.1 评论功能</h2><p>gitment似乎不能用了，但是好在NexT已经支持gitalk，问题不大。教程详见<a href="https://hexo-next.readthedocs.io/zh_CN/latest/next/advanced/gitalk-%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/">gitalk评论系统</a>。</p>
 <h2 id="2-2-站内搜索功能"><a href="#2-2-站内搜索功能" class="headerlink" title="2.2 站内搜索功能"></a>2.2 站内搜索功能</h2><p>详见<a href="https://theme-next.iissnan.com/third-party-services.html#search-system">第三方服务集成</a>中Local Search部分。</p>
 <h2 id="2-3-数学公式"><a href="#2-3-数学公式" class="headerlink" title="2.3 数学公式"></a>2.3 数学公式</h2><p><a href="https://blog.csdn.net/ssjdoudou/article/details/103318019">Hexo-next主题支持数学公式</a></p>
 <h2 id="2-4-版权信息"><a href="#2-4-版权信息" class="headerlink" title="2.4 版权信息"></a>2.4 版权信息</h2><p>在<code>主题配置文件</code>中修改：</p>
