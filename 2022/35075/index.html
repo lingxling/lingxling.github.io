@@ -20,16 +20,16 @@
     var CONFIG = {"hostname":"lingxling.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="参考资料：  课程官方网页：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;index.html 教材：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;xv6&#x2F;book-riscv-rev2.pdf 参考代码：http:&#x2F;&#x2F;doraemonzzz.com&#x2F;tags&#x2F;6-S081&#x2F;，以下代码主要参考该工作。">
+  <meta name="description" content="参考资料：  课程官方网页：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;index.html xv6 book：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;xv6&#x2F;book-riscv-rev2.pdf xv6手册中文版：http:&#x2F;&#x2F;xv6.dgs.zone&#x2F; 参考代码：http:&#x2F;&#x2F;doraemonzzz.com&#x2F;tags&#x2F;6">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MIT 6.S081 Lab1 Utilities">
 <meta property="og:url" content="https://lingxling.github.io/2022/35075/index.html">
 <meta property="og:site_name" content="lingxling&#39;s blog">
-<meta property="og:description" content="参考资料：  课程官方网页：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;index.html 教材：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;xv6&#x2F;book-riscv-rev2.pdf 参考代码：http:&#x2F;&#x2F;doraemonzzz.com&#x2F;tags&#x2F;6-S081&#x2F;，以下代码主要参考该工作。">
+<meta property="og:description" content="参考资料：  课程官方网页：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;index.html xv6 book：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;xv6&#x2F;book-riscv-rev2.pdf xv6手册中文版：http:&#x2F;&#x2F;xv6.dgs.zone&#x2F; 参考代码：http:&#x2F;&#x2F;doraemonzzz.com&#x2F;tags&#x2F;6">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://lingxling.github.io/images/sieve.gif">
 <meta property="article:published_time" content="2022-09-24T06:43:08.000Z">
-<meta property="article:modified_time" content="2022-10-18T04:27:38.562Z">
+<meta property="article:modified_time" content="2022-11-02T15:14:25.688Z">
 <meta property="article:author" content="lxl">
 <meta property="article:tag" content="MIT 6.S081">
 <meta name="twitter:card" content="summary">
@@ -221,7 +221,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-18 12:27:38" itemprop="dateModified" datetime="2022-10-18T12:27:38+08:00">2022-10-18</time>
+                <time title="Modified: 2022-11-02 23:14:25" itemprop="dateModified" datetime="2022-11-02T23:14:25+08:00">2022-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -254,7 +254,8 @@
         <p>参考资料：</p>
 <ul>
 <li>课程官方网页：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
-<li>教材：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>xv6 book：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>xv6手册中文版：<a target="_blank" rel="noopener" href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
 <li>参考代码：<a target="_blank" rel="noopener" href="http://doraemonzzz.com/tags/6-S081/">http://doraemonzzz.com/tags/6-S081/</a>，以下代码主要参考该工作。<span id="more"></span></li>
 </ul>
 <h1 id="0-配置实验环境"><a href="#0-配置实验环境" class="headerlink" title="0 配置实验环境"></a>0 配置实验环境</h1><ol>
@@ -395,7 +396,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
