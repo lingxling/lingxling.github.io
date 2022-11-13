@@ -35,6 +35,35 @@
       </tags>
   </entry>
   <entry>
+    <title>gdb初学笔记</title>
+    <url>/2022/56307/</url>
+    <content><![CDATA[<blockquote>
+<p>读书时学过怎么用gdb，但是因为不常用很快忘光了。由于某些环境下只能用gdb调试，所以现在再次学习总结一下gdb。</p>
+</blockquote>
+<span id="more"></span>
+<h1 id="0-gcc编译命令"><a href="#0-gcc编译命令" class="headerlink" title="0 gcc编译命令"></a>0 gcc编译命令</h1><p>从源代码hello.c到可执行文件hello，需要经过hello.i、hello.s、hello.o，最后才得到hello：</p>
+<p><img data-src="/../images/compile/compile.png"></p>
+<p>gcc编译命令的格式：<code>gcc [flags] &lt;source files&gt; -o &lt;output file&gt;</code></p>
+<ul>
+<li>预处理，处理源代码中的预处理命令，包括头文件展开、宏定义替换、条件编译等：<br><code>gcc -E hello.c –o hello.i</code></li>
+<li>编译，将预处理得到的文件翻译转换为汇编代码文件：<code>gcc -S hello.i -o hello.s</code></li>
+<li>汇编，将汇编代码翻译成机器码得到目标文件：<code>gcc -c hello.s -o hello.o</code></li>
+<li>链接，将多个目标文件和所需的库文件链接成可执行文件：<code>gcc hello.o -o hello</code><br>上述编译过程可以简化为：<code>gcc hello.c -o hello</code></li>
+</ul>
+<h1 id="1-启动gdb"><a href="#1-启动gdb" class="headerlink" title="1 启动gdb"></a>1 启动gdb</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gcc -g hello.c -o hello  # 使用-g编译，生成可执行文件</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动方法1</span></span><br><span class="line">gdb hello</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动方法2</span></span><br><span class="line">gdb</span><br><span class="line">... # 进入调试器</span><br><span class="line">(gdb) file hello</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-使用gdb调试"><a href="#2-使用gdb调试" class="headerlink" title="2 使用gdb调试"></a>2 使用gdb调试</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">(gdb) help &lt;command&gt;  # 获取&lt;command&gt;的用法</span><br><span class="line"></span><br><span class="line">(gdb) set args [...]  # 设置main运行参数；后面的参数为空，相当于撤销参数设置</span><br><span class="line"></span><br><span class="line">(gdb) run [...]     # 运行程序，[...]里放置参数（如果为空则用args的参数）。没有断点会运行至出错或者结束</span><br><span class="line">(gdb) start [...]   # 启动程序，[...]里放置参数，在main函数的第一行语句处停止执行</span><br><span class="line"></span><br><span class="line">(gdb) break &lt;location&gt;                 # 打断点，程序运行到断点后暂停运行，e.g.,</span><br><span class="line">(gdb) break 10</span><br><span class="line">(gdb) break hello.c:10</span><br><span class="line">(gdb) break func</span><br><span class="line">(gdb) break hello.c:func</span><br><span class="line"></span><br><span class="line">(gdb) break &lt;location&gt; if &lt;condition&gt;  # 条件断点，只有在条件满足时才在该点break</span><br><span class="line">(gdb) condtion &lt;N&gt; [condition]         # 修改breakpoint N的条件，不指定condition则删除对应的条件</span><br><span class="line"></span><br><span class="line">(gdb) disable breakpoint &lt;N&gt;  # 禁用断点N</span><br><span class="line">(gdb) ignore &lt;N&gt; &lt;COUNT&gt;      # 指定断点N失效的次数</span><br><span class="line">(gdb) enable breakpoint &lt;N&gt;   # 允许断点N</span><br><span class="line">(gdb) delete breakpoint &lt;N&gt;   # 删除断点N</span><br><span class="line">(gdb) delete                  # 删除所有断点</span><br><span class="line"></span><br><span class="line">(gdb) step [N]      # 单步执行，如果遇到函数调用，则进入函数中，N指定执行的代码行数</span><br><span class="line">(gdb) next [N]      # 单步执行，遇到函数执行不进入函数中，N指定执行的代码行数</span><br><span class="line">(gdb) continue [N]  # 继续运行，直到遇到下一个断点。N指定跳过遇到断点的次数</span><br><span class="line">(gdb) finish        # 继续运行直到当前函数执行完成</span><br><span class="line"></span><br><span class="line">(gdb) backtrace [N]  # 输出当前调试环境中所有的栈帧信息，N指定打印最里（正数）或最外（负数）N个栈帧的信息</span><br><span class="line">(gdb) backtrace </span><br><span class="line"></span><br><span class="line">(gdb) frame &lt;N&gt;  # 输出栈帧N的信息</span><br><span class="line"></span><br><span class="line">(gdb) print &lt;EXPRESSION&gt;        # 输出表达式的值</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">e.g.,</span></span><br><span class="line">(gdb) print array[0]@2          # 查看第0，1个元素</span><br><span class="line">(gdb) print file::variable</span><br><span class="line">(gdb) print function::variable</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">(gdb) watch &lt;EXPRESSION&gt;   # 监控表达式，一旦变化程序就停止运行</span><br><span class="line">(gdb) rwatch &lt;EXPRESSION&gt;  # 只要读取目标表达式的值，程序就停止运行</span><br><span class="line">(gdb) awatch &lt;EXPRESSION&gt;  # 只要读取目标表达式的值或者改变值的操作，程序就会停止运行</span><br><span class="line">(gdb) watch -l &lt;ADDRESS&gt;   # 监控地址，一旦该地址对应的内存发生变化，程序就停止运行</span><br><span class="line"></span><br><span class="line">(gdb) info breakpoint &lt;N&gt;     # 查看断点N的信息</span><br><span class="line">(gdb) info reg                # 查看寄存器的信息</span><br><span class="line"></span><br><span class="line">(gdb) list &lt;LINENUM&gt;               # 列出指定行数上下十行的代码</span><br><span class="line">(gdb) list &lt;LINENUM1&gt;, &lt;LINENUM2&gt;  # 列出指定行数之间的代码</span><br><span class="line">(gdb) list &lt;FUNCTION&gt;              # 查看特定函数的代码</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-在qemu中使用gdb"><a href="#3-在qemu中使用gdb" class="headerlink" title="3 在qemu中使用gdb"></a>3 在qemu中使用gdb</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># step 1.</span></span><br><span class="line">make qemu-gdb</span><br><span class="line"><span class="comment"># qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 -S -gdb tcp::26000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># step 2. 根据提示，在另一个shell中运行gdb</span></span><br><span class="line">riscv64-unknown-elf-gdb  <span class="comment"># xv6的ISA是riscv，所以需要指定riscv调试器。如果默认是riscv调试器，直接输 gdb 也可以</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># step 3. 加载可执行文件，e.g.,</span></span><br><span class="line">(gdb) file user/_[execname]</span><br><span class="line">(gdb) file kernel/kernel</span><br><span class="line"></span><br><span class="line"><span class="comment"># step 4. 通过gdb程序的远程调试功能和qemu的远程gdb调试接口来调试程序</span></span><br><span class="line">(gdb) target remote localhost:26000</span><br><span class="line"></span><br><span class="line"><span class="comment"># step 5. 打断点</span></span><br><span class="line">(gdb) b [...]</span><br><span class="line"></span><br><span class="line"><span class="comment"># step 6. 在第一个shell中运行虚拟机</span></span><br><span class="line"><span class="comment"># 第一个shell的虚拟机运行到打了断点的部分时，第二个shell的gdb会输出对应信息。</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>gdb</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git初学笔记</title>
     <url>/2022/22760/</url>
     <content><![CDATA[<blockquote>
@@ -53,6 +82,83 @@
       </categories>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>makefile初学笔记</title>
+    <url>/2022/60804/</url>
+    <content><![CDATA[<p>参考资料：</p>
+<ul>
+<li><a href="https://makefiletutorial.com/#static-pattern-rules">https://makefiletutorial.com/#static-pattern-rules</a></li>
+<li><a href="https://blog.csdn.net/oqqHuTu12345678/article/details/125617988">https://blog.csdn.net/oqqHuTu12345678/article/details/125617988</a><span id="more"></span></li>
+</ul>
+<h1 id="1-Basic-Rules"><a href="#1-Basic-Rules" class="headerlink" title="1 Basic Rules"></a>1 Basic Rules</h1><p>一个makefile由多条规则组成，每条规则一般像这样：</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">targets: prerequisites</span></span><br><span class="line">	command</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line"><span class="comment"># e.g.,</span></span><br><span class="line"><span class="section">blah: blah.c</span></span><br><span class="line">	cc blah.c -o blah</span><br></pre></td></tr></table></figure>
+
+<p>当运行<code>make</code>时，会先找到第一个target，然后判断是否需要重新运行command以重新生成targets。只有当targets不存在，或者prerequisites有更新才会重新运行。Make的逻辑是：先找到第一个target，看这个target的prerequisites是否满足；如果不满足，就会在makefile中查找生成prerequisites的rule，递归执行直到某个rule的prerequisites已经满足，就开始执行command。</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">blah: blah.o</span></span><br><span class="line">	cc blah.o -o blah <span class="comment"># Runs third</span></span><br><span class="line"></span><br><span class="line"><span class="section">blah.o: blah.c</span></span><br><span class="line">	cc -c blah.c -o blah.o <span class="comment"># Runs second</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Typically blah.c would already exist, but I want to limit any additional required files</span></span><br><span class="line"><span class="section">blah.c:</span></span><br><span class="line">	echo <span class="string">&quot;int main() &#123; return 0; &#125;&quot;</span> &gt; blah.c <span class="comment"># Runs first</span></span><br></pre></td></tr></table></figure>
+<p><code>make</code>命令可以配合可选项实现多种选择，例如，<code>-f</code>指定makefile文件，<code>-I</code>指定include路径，指定<code>targets</code>为<code>cleam</code>清除数据（即<code>make clean</code>）：</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">some_file: </span></span><br><span class="line">	touch some_file</span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -f some_file</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-Variables"><a href="#2-Variables" class="headerlink" title="2 Variables"></a>2 Variables</h1><ul>
+<li>通过<code>:=</code>、<code>=</code>或者<code>?=</code>定义变量：<ul>
+<li><code>=</code>，以递归的形式展开变量，即赋值的变量只有在被引用&#x2F;使用时才会展开，即延迟展开（不常用）</li>
+<li><code>:=</code>，直接展开式赋值</li>
+<li><code>?=</code>，使用<code>?=</code>赋值时，只有变量未被赋值过时才有效</li>
+</ul>
+</li>
+<li><code>+=</code>：append</li>
+<li>对于Make来说，所有的变量都是string，单引号或者双引号是没有意义的</li>
+<li>通过<code>$(VAR)</code>或<code>$&#123;VAR&#125;</code>使用变量<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">files := file1 file2</span><br><span class="line"><span class="section">some_file: <span class="variable">$(files)</span></span></span><br><span class="line">	echo <span class="string">&quot;Look at this variable: &quot;</span> <span class="variable">$(files)</span></span><br><span class="line">	touch some_file</span><br><span class="line"></span><br><span class="line"><span class="section">file1:</span></span><br><span class="line">	touch file1</span><br><span class="line"><span class="section">file2:</span></span><br><span class="line">	touch file2</span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -f file1 file2 some_file</span><br></pre></td></tr></table></figure></li>
+<li>可以给指定target设置变量，从而其他的target都无法使用：<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">all: one = cool</span></span><br><span class="line"></span><br><span class="line"><span class="section">all: </span></span><br><span class="line">	echo one is defined: <span class="variable">$(one)</span></span><br><span class="line"></span><br><span class="line"><span class="section">other:</span></span><br><span class="line">	echo one is nothing: <span class="variable">$(one)</span></span><br></pre></td></tr></table></figure></li>
+<li>也可以给符号特定pattern的target赋变量：<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">%.c: one = cool</span></span><br><span class="line"></span><br><span class="line"><span class="section">blah.c: </span></span><br><span class="line">	echo one is defined: <span class="variable">$(one)</span></span><br><span class="line"></span><br><span class="line"><span class="section">other:</span></span><br><span class="line">	echo one is nothing: <span class="variable">$(one)</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="3-Targets"><a href="#3-Targets" class="headerlink" title="3 Targets"></a>3 Targets</h1><ul>
+<li>通过指定<code>all</code>target，可以使<code>all</code>target的所有prerequisites都被执行，e.g.,<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="section">f1.o:</span></span><br><span class="line">	echo f1.o</span><br><span class="line"><span class="section">f2.o:</span></span><br><span class="line">    echo f2.o</span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以合并rules，e.g.,</span></span><br><span class="line"><span class="section">all: f1.o f2.o</span></span><br><span class="line">f1.o f2.o:</span><br><span class="line">	echo <span class="variable">$@</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="3-Automatic-Variables-and-Wildcards"><a href="#3-Automatic-Variables-and-Wildcards" class="headerlink" title="3 Automatic Variables and Wildcards"></a>3 Automatic Variables and Wildcards</h1><ul>
+<li><code>*</code>：匹配任意个字符，可用于搜索文件系统中匹配的文件名。注意它在targets和prerequisites中只能在作为变量时起作用，否则就是一个string</li>
+<li><code>%</code>：匹配任意个字符，和<code>*</code>的区别在于，<code>*</code>应用在系统中，<code>%</code>应用在这个makefile文件中<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Print out file information about every .c file</span></span><br><span class="line"><span class="section">print: $(wildcard *.c)</span></span><br><span class="line">	ls -la  <span class="variable">$?</span></span><br><span class="line"></span><br><span class="line">thing_wrong := *.o <span class="comment"># Don&#x27;t do this! &#x27;*&#x27; will not get expanded</span></span><br><span class="line">thing_right := <span class="variable">$(<span class="built_in">wildcard</span> *.o)</span></span><br><span class="line"></span><br><span class="line"><span class="section">all: one two three four</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Fails, because $(thing_wrong) is the string &quot;*.o&quot;</span></span><br><span class="line"><span class="section">one: <span class="variable">$(thing_wrong)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Stays as *.o if there are no files that match this pattern :(</span></span><br><span class="line"><span class="section">two: *.o </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Works as you would expect! In this case, it does nothing.</span></span><br><span class="line"><span class="section">three: <span class="variable">$(thing_right)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Same as rule three</span></span><br><span class="line"><span class="section">four: $(wildcard *.o)</span></span><br></pre></td></tr></table></figure></li>
+<li><code>$@</code>：表示target name</li>
+<li><code>$?</code>：表示比target要新的prerequisites</li>
+<li><code>$^</code>：表示所有不重复的rerequisites，以空格分开</li>
+<li><code>$&lt;</code>：表示第一个prerequisites</li>
+</ul>
+<h1 id="4-Implicit-Rules-and-Static-Pattern-Rules"><a href="#4-Implicit-Rules-and-Static-Pattern-Rules" class="headerlink" title="4 Implicit Rules and Static Pattern Rules"></a>4 Implicit Rules and Static Pattern Rules</h1><ul>
+<li>这两种规则都可以减少写makefile文件的工作量，但是对应地，makefile文件的可读性会下降<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ======== Implicit Rules ========</span></span><br><span class="line"><span class="comment"># CC: Program for compiling C programs; default cc</span></span><br><span class="line"><span class="comment"># CXX: Program for compiling C++ programs; default g++</span></span><br><span class="line"><span class="comment"># CFLAGS: Extra flags to give to the C compiler</span></span><br><span class="line"><span class="comment"># CXXFLAGS: Extra flags to give to the C++ compiler</span></span><br><span class="line"><span class="comment"># CPPFLAGS: Extra flags to give to the C preprocessor</span></span><br><span class="line"><span class="comment"># LDFLAGS: Extra flags to give to compilers when they are supposed to invoke the linker</span></span><br><span class="line">CC = gcc <span class="comment"># Flag for implicit rules</span></span><br><span class="line">CFLAGS = -g <span class="comment"># Flag for implicit rules. Turn on debug info</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Implicit rule #1: blah is built via the C linker implicit rule</span></span><br><span class="line"><span class="comment"># Implicit rule #2: blah.o is built via the C compilation implicit rule, because blah.c exists</span></span><br><span class="line"><span class="section">blah: blah.o</span></span><br><span class="line"></span><br><span class="line"><span class="section">blah.c:</span></span><br><span class="line">	echo <span class="string">&quot;int main() &#123; return 0; &#125;&quot;</span> &gt; blah.c</span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -f blah*</span><br><span class="line"></span><br><span class="line"><span class="comment"># ======== Static Pattern Rules ========</span></span><br><span class="line"><span class="section">targets...: target-pattern: prereq-patterns ...</span></span><br><span class="line">   commands</span><br><span class="line"></span><br><span class="line">objects = foo.o bar.o all.o</span><br><span class="line"><span class="section">all: <span class="variable">$(objects)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># These files compile via implicit rules</span></span><br><span class="line"><span class="comment"># Syntax - targets ...: target-pattern: prereq-patterns ...</span></span><br><span class="line"><span class="comment"># In the case of the first target, foo.o, the target-pattern matches foo.o and sets the &quot;stem&quot; to be &quot;foo&quot;.</span></span><br><span class="line"><span class="comment"># It then replaces the &#x27;%&#x27; in prereq-patterns with that stem</span></span><br><span class="line"><span class="variable">$(objects)</span>: %.o: %.c</span><br><span class="line"></span><br><span class="line"><span class="section">all.c:</span></span><br><span class="line">	echo <span class="string">&quot;int main() &#123; return 0; &#125;&quot;</span> &gt; all.c</span><br><span class="line"></span><br><span class="line"><span class="section">%.c:</span></span><br><span class="line">	touch <span class="variable">$@</span></span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm -f *.c *.o all</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="5-Commands-and-Exection"><a href="#5-Commands-and-Exection" class="headerlink" title="5 Commands and Exection"></a>5 Commands and Exection</h1><ul>
+<li><code>-</code>：command前加<code>-</code>，即使该条命令出错，也不影响后续命令的执行</li>
+<li><code>@</code>：在commands开头加上<code>@</code>可以令其不输出内容，e.g.,<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">all: </span></span><br><span class="line">	@echo <span class="string">&quot;This make line will not be printed&quot;</span></span><br><span class="line">	echo <span class="string">&quot;But this will&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li><code>$$</code>：command里用<code>$$</code>可以输出<code>$</code>符号，然后在makefile文件里就可以引用shell中的变量，例如：<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">all:</span></span><br><span class="line">	<span class="comment"># Same as running &quot;sh_var=&#x27;I am a shell variable&#x27;; echo $sh_var&quot; in the shell</span></span><br><span class="line">	sh_var=&#x27;I am a shell variable&#x27;; echo $$sh_var</span><br></pre></td></tr></table></figure></li>
+<li>通过修改<code>SHELL</code>变量，可以修改默认的shell（默认是<code>/bin/sh</code>）<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">SHELL=/bin/bash</span><br><span class="line"><span class="section">cool:</span></span><br><span class="line">	echo <span class="string">&quot;Hello from bash&quot;</span></span><br></pre></td></tr></table></figure></li>
+<li><code>-k</code>：<code>make</code>命令添加可选项<code>-k</code>，使得在遇到错误时仍然能继续执行，即如果某个target出错，依赖这个target的rule都不执行，其它rule执行</li>
+<li><code>-i</code>：<code>make</code>命令添加可选项<code>-i</code>，忽略一切命令的出错，执行所有生成规则</li>
+<li><code>-s</code>：<code>make</code>命令添加可选项<code>-s</code>，不输出任何内容，相当于在每个command前加<code>@</code></li>
+<li><code>export</code>：将某个变量设置为shell变量，e.g.,<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">shell_env_var=Shell env var, created inside of Make</span><br><span class="line"><span class="keyword">export</span> shell_env_var</span><br><span class="line"><span class="section">all:</span></span><br><span class="line">	echo <span class="variable">$(shell_env_var)</span></span><br><span class="line">	echo $$shell_env_var</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="6-Conditional-Makefiles"><a href="#6-Conditional-Makefiles" class="headerlink" title="6 Conditional Makefiles"></a>6 Conditional Makefiles</h1><ul>
+<li><p><code>ifeq/else</code>：</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">foo = ok</span><br><span class="line"></span><br><span class="line"><span class="section">all:</span></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="variable">$(foo)</span>, ok)</span><br><span class="line">	echo <span class="string">&quot;foo equals ok&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	echo <span class="string">&quot;nope&quot;</span></span><br><span class="line"><span class="keyword">endif</span> </span><br><span class="line"></span><br><span class="line"><span class="comment"># ======== Check if a variable is empty ========</span></span><br><span class="line">nullstring =</span><br><span class="line">foo = <span class="variable">$(nullstring)</span> <span class="comment"># end of line; there is a space here</span></span><br><span class="line"></span><br><span class="line"><span class="section">all:</span></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="variable">$(<span class="built_in">strip</span> <span class="variable">$(foo)</span>)</span>,)</span><br><span class="line">	echo <span class="string">&quot;foo is empty after being stripped&quot;</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"><span class="keyword">ifeq</span> (<span class="variable">$(nullstring)</span>,)</span><br><span class="line">	echo <span class="string">&quot;nullstring doesn&#x27;t even have spaces&quot;</span></span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>ifdef/ifndef</code>：</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">bar =</span><br><span class="line">foo = <span class="variable">$(bar)</span></span><br><span class="line"></span><br><span class="line"><span class="section">all:</span></span><br><span class="line"><span class="keyword">ifdef</span> foo</span><br><span class="line">	echo <span class="string">&quot;foo is defined&quot;</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"><span class="keyword">ifndef</span> bar</span><br><span class="line">	echo <span class="string">&quot;but bar is not&quot;</span></span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ======== $(makeflags)可以用于给make命令添加可选项 ========</span></span><br><span class="line">bar =</span><br><span class="line">foo = <span class="variable">$(bar)</span></span><br><span class="line"></span><br><span class="line"><span class="section">all:</span></span><br><span class="line"><span class="comment"># Search for the &quot;-i&quot; flag. MAKEFLAGS is just a list of single characters, one per flag. So look for &quot;i&quot; in this case.</span></span><br><span class="line"><span class="keyword">ifneq</span> (,<span class="variable">$(<span class="built_in">findstring</span> i, <span class="variable">$(MAKEFLAGS)</span>)</span>)</span><br><span class="line">	echo <span class="string">&quot;i was passed to MAKEFLAGS&quot;</span></span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h1 id="7-Functions"><a href="#7-Functions" class="headerlink" title="7 Functions"></a>7 Functions</h1><ul>
+<li><code>findstring</code>：<code>$(findstring &lt;find&gt;,&lt;in&gt;)</code></li>
+<li><code>subst</code>：<code>$(subst &lt;from&gt;,&lt;to&gt;,&lt;text&gt;)</code>，注意逗号之间不要有空格</li>
+<li><code>patsubst</code>：<code>$(patsubst &lt;pattern&gt;,&lt;replacement&gt;,&lt;text&gt;)</code>，注意逗号之间不要有空格</li>
+<li><code>strip</code>：<code>$(strip &lt;string&gt;)</code></li>
+<li><code>fileter</code>：<code>$(filter &lt;pattern&gt;,&lt;text&gt;)</code></li>
+<li><code>foreach</code>：<code>$(foreach &lt;var&gt;,&lt;list&gt;,&lt;text&gt;)</code></li>
+<li><code>if</code>：<code>$(if &lt;condition&gt;,&lt;then-part&gt;)或(if&lt;condition&gt;,&lt;then-part&gt;,&lt;else-part&gt;)</code></li>
+</ul>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>makefile</tag>
       </tags>
   </entry>
   <entry>
@@ -159,7 +265,8 @@
   <entry>
     <title>MIT 6.S081 Lab3 Page Tables</title>
     <url>/2022/29909/</url>
-    <content><![CDATA[<ul>
+    <content><![CDATA[<p>参考资料：</p>
+<ul>
 <li>课程官方网页：<a href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
 <li>xv6 book：<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
 <li>xv6手册中文版：<a href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
@@ -174,15 +281,166 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// exec.c</span></span><br><span class="line"><span class="keyword">if</span> (p-&gt;pid == <span class="number">1</span>) vmprint(p-&gt;pagetable);</span><br><span class="line"></span><br><span class="line"><span class="comment">// kernel/defs.h</span></span><br><span class="line"><span class="type">void</span>            <span class="title function_">vmprint</span><span class="params">(<span class="type">pagetable_t</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// kernel/vm.c</span></span><br><span class="line"><span class="type">void</span> __vmprint(<span class="type">pagetable_t</span> pagetable, <span class="type">int</span> level) &#123;</span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">512</span>; i++)&#123;</span><br><span class="line">    <span class="type">pte_t</span> pte = pagetable[i];</span><br><span class="line">    <span class="keyword">if</span>((pte &amp; PTE_V) &amp;&amp; (pte &amp; (PTE_R|PTE_W|PTE_X)) == <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="comment">// this PTE points to a lower-level page table.</span></span><br><span class="line">      uint64 child = PTE2PA(pte);</span><br><span class="line">      <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt;= level; ++j) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;..&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (j + <span class="number">1</span> &lt;= level) <span class="built_in">printf</span>(<span class="string">&quot; &quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;%d: pte %p pa %p\n&quot;</span>, i, pte, child);</span><br><span class="line">      __vmprint((<span class="type">pagetable_t</span>)child, level + <span class="number">1</span>);  </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(pte &amp; PTE_V)&#123;  <span class="comment">// leaf pte</span></span><br><span class="line">      uint64 child = PTE2PA(pte);</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;.. .. ..%d: pte %p pa %p\n&quot;</span>, i, pte, child);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">vmprint</span><span class="params">(<span class="type">pagetable_t</span> p)</span> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;page table %p\n&quot;</span>, p);</span><br><span class="line">  __vmprint(p, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h1 id="3-Detecting-which-pages-have-been-accessed-hard"><a href="#3-Detecting-which-pages-have-been-accessed-hard" class="headerlink" title="3 Detecting which pages have been accessed (hard)"></a>3 Detecting which pages have been accessed (hard)</h1><h2 id="3-1-题意"><a href="#3-1-题意" class="headerlink" title="3.1 题意"></a>3.1 题意</h2><p>题目要求实现函数<code>pgaccess</code>，该函数用于报告哪个页被访问过。该函数包括三个输入参数：首先是待检查的第一个user page的虚拟地址（virtual address, va）；第二，是要检查的页的数量；第三，保存结果的结构体，该结构体以bitmask的形式保存页表是否被访问过，其中最低位对应第一个页。</p>
-<h2 id="3-2-实现步骤"><a href="#3-2-实现步骤" class="headerlink" title="3.2 实现步骤"></a>3.2 实现步骤</h2><p>根据<code>user/pgtbltest.c</code>中的<code>pgaccess_test</code>函数，<code>pgaccess</code>有三个输入参数：<code>buf</code>、32和<code>&amp;abits</code>。<code>buf</code>是新申请的内存，大小为32个页，在当前进程的页表中有指向这些页的pte，我们只要获取<strong>最终</strong>指向这些页的pte，就可以知道这些页是否被访问过。我们可以根据<code>buf</code>的va为索引在当前进程的页表中找到这些pte，**<code>buf</code>本身就是va**。32表示页数。<code>abits</code>用于保存这32个页是否被访问过的结果，<code>&amp;abits</code>使得<code>pgaccess</code>函数可以直接修改<code>abits</code>。</p>
+<h2 id="3-2-实现步骤"><a href="#3-2-实现步骤" class="headerlink" title="3.2 实现步骤"></a>3.2 实现步骤</h2><p>根据<code>user/pgtbltest.c</code>中的<code>pgaccess_test</code>函数，<code>pgaccess</code>有三个输入参数：<code>buf</code>、32和<code>&amp;abits</code>。<code>buf</code>是新申请的内存，大小为32个页，在当前进程的页表中有指向这些页的pte，我们只要获取最终指向这些页的pte，就可以知道这些页是否被访问过。我们可以根据<code>buf</code>的va为索引在当前进程的页表中找到这些pte，<code>buf</code>本身就是va。32表示页数。<code>abits</code>用于保存这32个页是否被访问过的结果，<code>&amp;abits</code>使得<code>pgaccess</code>函数可以直接修改<code>abits</code>。</p>
 <p>RISC-V在硬件上已经实现了将page是否被访问过保存在pte的flags中，本题要做的只是把flags中的内容提取出来。<code>pageaccess</code>已经在userspace层面实现，所以只需要在kernel level实现<code>sys_pgaccess</code>函数即可。根据提示，需要在<code>kernel/riscv.h</code>中定义<code>PTE_A</code>，即判断一个页是否被访问过的bit（类似<code>PTE_U</code>，<code>PTE_R</code>等），根据<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">xv6 book</a>的Fig 3.2可知，<code>PTE_A</code>应该是每个PTE的右起第6个bit：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/riscv.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_A (1L &lt;&lt; 6) <span class="comment">// accessed</span></span></span><br></pre></td></tr></table></figure>
 
-<p>在<code>sys_pgaccess</code>函数中，首先需要获取保存在寄存器中的参数，这和Lab2是一样的。然后，就可以根据va（再次强调，**<code>buf</code>本身就是va**）在当前进程的页表中索引到对应的<code>pte</code>，索引过程可以参考<code>kernel/vm.c</code>中的<code>walk</code>函数。最后，将这些<code>pte</code>的<code>PTE_A</code>截取出来保存到输出结果中，并且重置<code>PTE_A</code>。</p>
+<p>在<code>sys_pgaccess</code>函数中，首先需要获取保存在寄存器中的参数，这和Lab2是一样的。然后，就可以根据va（再次强调，<code>buf</code>本身就是va）在当前进程的页表中索引到对应的<code>pte</code>，索引过程可以参考<code>kernel/vm.c</code>中的<code>walk</code>函数。最后，将这些<code>pte</code>的<code>PTE_A</code>截取出来保存到输出结果中，并且重置<code>PTE_A</code>。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">sys_pgaccess</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// lab pgtbl: your code here.</span></span><br><span class="line">  uint64 va;           <span class="comment">// va保存待检查的page数组的虚拟地址</span></span><br><span class="line">  <span class="type">int</span> page_num;        <span class="comment">// 要核验的page数</span></span><br><span class="line">  uint64 abits_addr;   <span class="comment">// abits从低到高记录page是否被访问过，abits_addr保存abits的地址</span></span><br><span class="line">  <span class="keyword">if</span> (argaddr(<span class="number">0</span>, &amp;va) &lt; <span class="number">0</span> || argint(<span class="number">1</span>, &amp;page_num) &lt; <span class="number">0</span> || argaddr(<span class="number">2</span>, &amp;abits_addr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(va &gt;= MAXVA)</span><br><span class="line">    panic(<span class="string">&quot;walk&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="type">pagetable_t</span> pagetable = myproc() -&gt; pagetable;</span><br><span class="line">  uint mask = <span class="number">0</span>;  <span class="comment">// 内核数据</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; page_num; ++i, va += PGSIZE) &#123;</span><br><span class="line">    <span class="type">pte_t</span> *pte = <span class="number">0</span>;</span><br><span class="line">    <span class="type">pagetable_t</span> p = pagetable;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> level = <span class="number">2</span>; level &gt;= <span class="number">0</span>; --level) &#123;</span><br><span class="line">      <span class="comment">// PX根据level提取va对应的9bit的L0/L1/L2，即64bits只有最右9bit起作用，可以索引pagetable不越界</span></span><br><span class="line">      pte = &amp;p[PX(level, va)];  <span class="comment">// 根据L0/L1/L2获取页表中对应的pte，并取其地址</span></span><br><span class="line">      <span class="keyword">if</span>(*pte &amp; PTE_V)  <span class="comment">// 如果该PTE有效</span></span><br><span class="line">        p = (<span class="type">pagetable_t</span>)PTE2PA(*pte);  <span class="comment">// 找到次一级页表</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (*pte&amp;PTE_V &amp;&amp; *pte&amp;PTE_A) &#123;</span><br><span class="line">      mask = mask | (<span class="number">1L</span> &lt;&lt; i); </span><br><span class="line">      *pte &amp;= ~PTE_A;  <span class="comment">// 重置pte的PTE_A</span></span><br><span class="line">    &#125;    </span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (copyout(pagetable, abits_addr, (<span class="type">char</span>*)&amp;mask, <span class="keyword">sizeof</span>(uint64)) &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="3-3-总结"><a href="#3-3-总结" class="headerlink" title="3.3 总结"></a>3.3 总结</h2><p>在做这个实验时，我一直没搞明白<code>buf</code>到底指什么：它是pte？还是pagetable。后来读了参考代码才搞清楚，buf实际上就是大小为32个页的内存，当前进程的页表里有指向这些页的pte。</p>
 ]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>MIT 6.S081</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MIT 6.S081 学习总结（updating）</title>
+    <url>/2022/45755/</url>
+    <content><![CDATA[<p>参考资料：</p>
+<ul>
+<li>课程官方网页：<a href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
+<li>xv6 book：<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>xv6手册中文版：<a href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
+<li>参考代码：<a href="https://blog.csdn.net/qq_33894666/article/details/121625097">https://blog.csdn.net/qq_33894666/article/details/121625097</a></li>
+<li>参考书：《UNIX环境高级编程（第3版）》<span id="more"></span></li>
+</ul>
+<h1 id="1-Operating-system-interfaces"><a href="#1-Operating-system-interfaces" class="headerlink" title="1 Operating system interfaces"></a>1 Operating system interfaces</h1><h2 id="1-1-Processes-and-memory"><a href="#1-1-Processes-and-memory" class="headerlink" title="1.1 Processes and memory"></a>1.1 Processes and memory</h2><ul>
+<li><code>int fork()</code>：创建子进程，在父进程中的返回值是子进程的PID，在子进程中的返回值是0。<ul>
+<li><code>fork</code>函数创建新的子进程后，在很多情况下，子进程需要调用<code>exec</code>函数以执行另一个程序。</li>
+</ul>
+</li>
+<li><code>void exit(int status)</code>：终止当前进程，其操作包括调用各终止处理程序，然后关闭所有标准I&#x2F;O流等），<code>status</code>指示该进程是如何退出的，通常0指示正常退出的情况，1指示非正常退出的情况。<ul>
+<li>无论是否正常退出，终止该进程的父进程都能调用<code>wait</code>或<code>waitpid</code>函数取得其终止状态。</li>
+<li><code>_exit(int status)</code>：为进程提供无需运行终止处理程序或信号处理程序而最终只的方法。对标准I&#x2F;O流是否进行冲洗取决于实现。</li>
+<li>在<code>main</code>函数内执行<code>return</code>语句，等效于调用<code>exit</code>。</li>
+</ul>
+</li>
+<li><code>int wait(int *status)</code>：返回当前进程的已退出（或已杀死）子进程的PID，并将子进程的退出状态复制到传递给<code>wait</code>的地址。<ul>
+<li>如果调用方的子进程都没有退出，那么<code>wait</code>等待一个子进程退出；如果调用者没有子进程，<code>wait</code>立即返回-1。如果父进程不关心子进程的退出状态，它可以传递一个0地址给<code>wait</code>，即父进程中使用<code>wait(0)</code>。</li>
+<li>如果父进程在子进程之前停止，则子进程的父进程变为<code>init</code>状态（“这些进程由<code>init</code>进程收养”）。其操作过程大致是，在一个进程终止时，内核逐个检查所有活动进程，以判断它是否是正要终止进程的子进程。</li>
+<li>内核为每个终止子进程保存了一定量的信息，这些信息至少包括进程PID、该进程的终止状态以及该进程使用的CPU时间总量，当终止进程的父进程调用<code>wait</code>或者<code>waitpid</code>时，可以得到这些信息。一个已经终止，但是其父进程尚未对其进行善后处理（获取终止子进程的有关信息、释放它仍占用的资源）的进程被称为<strong>僵死进程</strong>。</li>
+</ul>
+</li>
+<li><code>int getpid()</code>：返回当前进程的PID。<ul>
+<li>Lab3-Speed up system calls (easy)中实现了对<code>getpid</code>方法的优化，使得进程可以在用户态就获取到自身的PID。简单地说，是给在进程的开始给进程分配了一个read-only的页，用于保存进程的PID，需要时就从这个页读取PID。</li>
+</ul>
+</li>
+<li><code>int sleep(int n)</code>：暂停当前进程，<code>n</code>指示暂停的时长。<ul>
+<li>Lab1-sleep (easy)涉及了该函数的用法</li>
+</ul>
+</li>
+<li><code>int exec(char *file, char *argv[])</code>：加载并执行可执行文件，<code>args</code>作为执行参数。<ul>
+<li>当进程调用<code>exec</code>函数时，该进程执行的程序完全替换为新程序，而新程序则从其main函数开始执行。</li>
+<li>调用<code>exec</code>并不创建新进程，所以调用前后进程的PID并不改变。</li>
+<li>在UNIX系统种有7种不同的<code>exec</code>函数可供使用，而xv6系统为了简便，统一为<code>exec</code>函数。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-2-I-x2F-O-and-File-descriptors"><a href="#1-2-I-x2F-O-and-File-descriptors" class="headerlink" title="1.2 I&#x2F;O and File descriptors"></a>1.2 I&#x2F;O and File descriptors</h2><ul>
+<li>文件描述符（file descriptors）：文件描述符是一个非负整数，表示进程可以读取或写入的、由内核管理的对象。进程可以通过打开一个<strong>文件</strong>、<strong>目录</strong>、<strong>设备</strong>，或创建一个<strong>管道</strong>，或复制一个已存在的描述符来获得一个文件描述符。<ul>
+<li>文件描述符接口将文件、管道和设备之间的差异抽象出来，使它们看起来都像字节流。</li>
+<li>进程从文件描述符0读取（标准输入），将输出写入文件描述符1（标准输出），并将错误消息写入文件描述符2（标准错误）。</li>
+<li><code>fork</code>复制进程后，父子进程在开始时拥有完全相同的打开文件和<strong>文件偏移量</strong>，并且父子进程之间<strong>共享</strong>文件偏移量。</li>
+<li><code>exec</code>替换了调用进程的内存，但保留其文件表。</li>
+<li><code>fork</code>和<code>exec</code>分离的用处之一在于，在这两个调用之间有机会对子进程进行I&#x2F;O重定向，而不会干扰父进程的I&#x2F;O设置。</li>
+</ul>
+</li>
+<li><code>int open(char *file, int flags)</code>：打开一个文件，<code>flags</code>指定打开的方式（例如：<code>O_RDONLY</code>, <code>O_WRONLY</code>等）。<ul>
+<li>由<code>open</code>函数返回的文件描述符一定是最小的可用描述符。</li>
+</ul>
+</li>
+<li><code>int read(int fd, char *buf, int n)</code>：从文件描述符fd读取最多n字节，将它们复制到buf，并返回读取的字节数。<ul>
+<li>从当前<strong>文件偏移量</strong>开始读取数据，然后将该偏移量前进读取的字节数。</li>
+<li>当没有更多的字节可读时，read返回0来表示文件的结束。</li>
+</ul>
+</li>
+<li><code>int write(int fd, char *buf, int n)</code>：将buf中的n字节写入文件描述符，并返回写入的字节数。<ul>
+<li>从当前<strong>文件偏移量</strong>开始写入数据，然后将该偏移量向前推进写入的字节数。</li>
+<li>只有发生错误时才会写入小于n字节的数据。</li>
+</ul>
+</li>
+<li><code>int lseek(int fd, int offset, int whence)</code>：为一个打开的文件显式设置文件偏移量。</li>
+<li><code>int close(int fd)</code>：关闭一个打开文件。当一个进程终止时，内核将自动关闭它所有的打开文件。</li>
+<li><code>int dup(int fd)</code>：复制一个现有的文件描述符，返回当前可用文件描述符中的最小数值。两个文件描述符<strong>共享文件偏移量</strong>。<ul>
+<li><code>int dup2(int fd, int fd2)</code>：可以用<code>fd2</code>参数指定新描述符的值，返回新的文件描述符。如果<code>fd2</code>已经打开，在先将其关闭。如果<code>fd</code>等于<code>fd2</code>，则<code>dup2</code>返回<code>fd2</code>，而不是关闭它。<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将hello world输出到fd指定的对象</span></span><br><span class="line">fd = dup(<span class="number">1</span>);</span><br><span class="line">write(<span class="number">1</span>, <span class="string">&quot;hello &quot;</span>, <span class="number">6</span>);</span><br><span class="line">write(fd, <span class="string">&quot;world\n&quot;</span>, <span class="number">6</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="1-3-Pipes"><a href="#1-3-Pipes" class="headerlink" title="1.3 Pipes"></a>1.3 Pipes</h2><ul>
+<li><code>int pipe(int fd[2])</code>：调用<code>pipe</code>函数可以创建一个新的管道，数组<code>fd</code>记录读写文件描述符。<ul>
+<li>一般而言，<code>fd[0]</code>为读入端的文件描述符，<code>fd[1]</code>为写入端的文件描述符，<code>fd[1]</code>的输出时<code>fd[0]</code>的输入。</li>
+<li>如果没有可用的数据，则管道上的读入端将进入等待，直到有新数据写入或所有指向写入端的文件描述符都被关闭。</li>
+<li>当所有指向写入端的文件描述符都被关闭时，读入端将返回0，就像到达数据文件的末尾一样。</li>
+<li>管道只能在具有公共祖先的两个进程之间使用。通常，进程先调用<code>pipe</code>，接着调用<code>fork</code>，从而创建父子进程之间的IPC通道。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-4-File-system"><a href="#1-4-File-system" class="headerlink" title="1.4 File system"></a>1.4 File system</h2><p>文件本身和文件的名字是不同的：同一个底层文件（叫做inode，索引结点）可以有多个名字（叫做link，链接）。每个链接都由目录中的一个条目组成，该条目包含一个文件名和一个对inode的引用。inode保存关于文件的元数据（metadata），包括其类型（文件&#x2F;目录&#x2F;设备…）、长度、文件内容在磁盘上的位置以及指向文件的链接数。每个inode由唯一的inode编号标识。</p>
+<ul>
+<li><code>int stat(char *file, struct stat *st)</code>：根据<strong>文件的完全路径</strong>，获取有关信息保存在<code>st</code>中。<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> T_DIR     1   <span class="comment">// Directory</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_FILE    2   <span class="comment">// File</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_DEVICE  3   <span class="comment">// Device</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> dev;     <span class="comment">// File system&#x27;s disk device</span></span><br><span class="line">  uint ino;    <span class="comment">// Inode number</span></span><br><span class="line">  <span class="type">short</span> type;  <span class="comment">// Type of file</span></span><br><span class="line">  <span class="type">short</span> nlink; <span class="comment">// Number of links to file</span></span><br><span class="line">  uint64 size; <span class="comment">// Size of file in bytes</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><code>int fstat(int fd, struct stat *st)</code>：<code>fstat</code>与<code>stat</code>的不同在于，<code>fstat</code>获的参数是<strong>文件描述符</strong>。<ul>
+<li>Lab1-find (moderate)中，<code>fstat</code>函数是读入fd指向文件的更具体的info，然后判断指向文件是什么类型，并进一步处理。</li>
+</ul>
+</li>
+<li><code>int link(char *file1, char *file2)</code>：创建新文件名<code>file2</code>，指向与现有文件名<code>file1</code>相同的inode。<ul>
+<li>通过<code>fstat</code>获取<code>ino</code>，可以知道<code>file1</code>和<code>file2</code>引用相同的底层内容，同时<code>nlink</code>计数将被置为2。</li>
+</ul>
+</li>
+<li><code>int unlink(char *file)</code>：删除链接。<ul>
+<li>只有当文件的链接数为零且没有文件描述符引用时，文件的inode和包含其内容的磁盘空间才会被释放。</li>
+</ul>
+</li>
+<li><code>int chdir(char *dir)</code>更改当前工作目录</li>
+<li><code>int mkdir(char *dir)</code>：创建一个新目录</li>
+<li><code>int mknod(char *file, int, int)</code>：创建一个引用设备的特殊文件。<ul>
+<li>与设备文件相关联的是主设备号和次设备号(mknod的两个参数)，它们唯一地标识了一个内核设备。</li>
+<li>当进程稍后打开设备文件时，内核将使用内核设备实现read和write系统调用，而不是使用文件系统。</li>
+</ul>
+</li>
+</ul>
+<h1 id="2-Operating-system-organization"><a href="#2-Operating-system-organization" class="headerlink" title="2 Operating system organization"></a>2 Operating system organization</h1><h2 id="2-1-Abstracting-physical-resources"><a href="#2-1-Abstracting-physical-resources" class="headerlink" title="2.1 Abstracting physical resources"></a>2.1 Abstracting physical resources</h2><ul>
+<li>为什么需要operating system<ul>
+<li>为了简化开发，需要提供一套能将资源抽象化的方法。</li>
+<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须可靠且良好运行：需要适时放弃处理资源、并且程序不要出bug（一出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离。</li>
+<li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-User-mode-supervisor-mode-and-system-calls"><a href="#2-2-User-mode-supervisor-mode-and-system-calls" class="headerlink" title="2.2 User mode, supervisor mode, and system calls"></a>2.2 User mode, supervisor mode, and system calls</h2><ul>
+<li>强隔离要求在操作系统和应用程序之间有硬边界，才能保证应用程序不能修改（甚至读取）操作系统的数据结构和指令，以及应用程序不能访问其他进程的内存。</li>
+<li>RISC-V有三种<strong>CPU可以执行指令的模式</strong>：机器模式（machine mode）、管理模式（supervisor mode）和用户模式（user mode），其权限由高到低。<ul>
+<li>在机器模式下执行的指令具有完全特权；CPU在机器模式下启动。机器模式主要用于配置计算机。</li>
+<li>在管理模式下，CPU被允许执行特权指令，例如启用和禁用中断等。管理模式下的软件称为在<strong>内核空间</strong>中运行。在内核空间（或管理模式）中运行的软件被称为<strong>内核</strong>。</li>
+<li>应用程序一般只能运行用户模式的指令，并称其为在<strong>用户空间</strong>中运行。如果应用程序需要使用内核函数（如<code>read</code>系统调用），CPU必须先切换管理模式，再由内核验证系统调用的参数，决定是否执行该指令。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-3-Kernel-organization"><a href="#2-3-Kernel-organization" class="headerlink" title="2.3 Kernel organization"></a>2.3 Kernel organization</h2><ul>
+<li>宏内核：整个操作系统都驻留在内核中，这样所有系统调用的实现都以管理模式运行。</li>
+<li>微内核：最大限度地减少在管理模式下运行的操作系统代码量，并在用户模式下执行大部分操作系统</li>
+</ul>
+<h2 id="2-4-Process-overview"><a href="#2-4-Process-overview" class="headerlink" title="2.4 Process overview"></a>2.4 Process overview</h2><ul>
+<li>进程是操作系统中资源分配的最小单位，线程是操作系统中调度的最小单位，线程之间共享进程资源。</li>
+<li>进程有两个栈区：用户栈区和内核栈区。当进程进入内核（由于系统调用或者中断）时，内核代码在内核栈上执行，此时它的用户栈仍然包含保存的数据，只是不处于活动状态。</li>
+<li>进程可以通过<code>ecall</code>提高硬件特权级别、进行系统调用，程序计数器（PC）更改为内核定义的入口点，入口点的代码切换到内核栈。系统调用完成时，切回用户栈，并通过调用<code>sret</code>指令返回用户空间，该指令降低了硬件特权级别，并在系统调用指令刚结束时恢复执行用户指令。</li>
+</ul>
+<h1 id="3-Page-tables"><a href="#3-Page-tables" class="headerlink" title="3 Page tables"></a>3 Page tables</h1><h2 id="3-1-Paging-hardware"><a href="#3-1-Paging-hardware" class="headerlink" title="3.1 Paging hardware"></a>3.1 Paging hardware</h2><p><img data-src="/../images/xv6book/va.png"></p>
+<h2 id="3-2-Kernel-address-space"><a href="#3-2-Kernel-address-space" class="headerlink" title="3.2 Kernel address space"></a>3.2 Kernel address space</h2><p>QEMU模拟了一台计算机，QEMU将设备接口作为<em>内存映射</em>控制寄存器（<em>memory-mapped</em> control registers）暴露给软件，这些寄存器位于物理地址空间0x80000000以下。内核可以通过读取&#x2F;写入这些特殊的物理地址与设备交互；这种读取和写入与设备硬件而不是RAM通信。内核使用<strong>直接映射</strong>获取<strong>内存</strong>和<strong>内存映射设备寄存器</strong>（PHYSTOP以下的地址都是直接映射），即将资源映射到等于物理地址的虚拟地址。例如：</p>
+<ul>
+<li>内核本身在虚拟地址空间和物理内存中都位于<code>KERNBASE=0x80000000</code>。</li>
+<li>当<code>fork</code>为子进程分配用户内存时，分配器返回该内存的物理地址。</li>
+</ul>
+<p>有几个内核虚拟地址不是直接映射：</p>
+<ul>
+<li>The trampoline page：该page在虚拟地址空间的顶部。但是对应的物理页面在虚拟地址空间中映射了两次：一次在虚拟地址空间的顶部，一次直接映射。</li>
+<li>The kernel stack pages：每个进程都有自己的内核栈，进程之间的内核栈会被映射到偏高一些的位置，从而留下guard page的空间。guard page是保护页，当某个进程发生内核栈溢出时，保护其他进程的内核栈不被影响。注意，guard page不会浪费物理内存，它只是占据了虚拟地址空间的一段靠后的地址，但是并不映射到物理地址空间。<br><img data-src="/../images/xv6book/kernel_space.png"></li>
+</ul>
+<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。<br><img data-src="/../images/xv6book/user_space.png"></p>
+<h1 id="4-Traps-and-system-calls"><a href="#4-Traps-and-system-calls" class="headerlink" title="4 Traps and system calls"></a>4 Traps and system calls</h1><h2 id="4-1-RISC-V-trap-machinery"><a href="#4-1-RISC-V-trap-machinery" class="headerlink" title="4.1 RISC-V trap machinery"></a>4.1 RISC-V trap machinery</h2><h2 id="4-2-Traps-from-user-space"><a href="#4-2-Traps-from-user-space" class="headerlink" title="4.2 Traps from user space"></a>4.2 Traps from user space</h2><h2 id="4-3-Traps-from-kernel-space"><a href="#4-3-Traps-from-kernel-space" class="headerlink" title="4.3 Traps from kernel space"></a>4.3 Traps from kernel space</h2><h2 id="4-4-Page-fault-exceptions"><a href="#4-4-Page-fault-exceptions" class="headerlink" title="4.4 Page-fault exceptions"></a>4.4 Page-fault exceptions</h2><h1 id="5-Interrupts-and-device-drivers"><a href="#5-Interrupts-and-device-drivers" class="headerlink" title="5 Interrupts and device drivers"></a>5 Interrupts and device drivers</h1><h1 id="6-Locking"><a href="#6-Locking" class="headerlink" title="6 Locking"></a>6 Locking</h1><h1 id="7-Scheduling"><a href="#7-Scheduling" class="headerlink" title="7 Scheduling"></a>7 Scheduling</h1><h1 id="8-File-system"><a href="#8-File-system" class="headerlink" title="8 File system"></a>8 File system</h1>]]></content>
       <categories>
         <category>学习笔记</category>
       </categories>

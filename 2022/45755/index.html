@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"lingxling.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="参考资料：  课程官方网页：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;index.html xv6 book：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;xv6&#x2F;book-riscv-rev2.pdf xv6手册中文版：http:&#x2F;&#x2F;xv6.dgs.zone&#x2F; 参考代码：https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_3389">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MIT 6.S081 学习总结（updating）">
+<meta property="og:url" content="https://lingxling.github.io/2022/45755/index.html">
+<meta property="og:site_name" content="lingxling&#39;s blog">
+<meta property="og:description" content="参考资料：  课程官方网页：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;index.html xv6 book：https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;xv6&#x2F;book-riscv-rev2.pdf xv6手册中文版：http:&#x2F;&#x2F;xv6.dgs.zone&#x2F; 参考代码：https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_3389">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://lingxling.github.io/images/xv6book/va.png">
+<meta property="og:image" content="https://lingxling.github.io/images/xv6book/kernel_space.png">
+<meta property="og:image" content="https://lingxling.github.io/images/xv6book/user_space.png">
+<meta property="article:published_time" content="2022-11-05T08:57:49.000Z">
+<meta property="article:modified_time" content="2022-11-13T10:04:49.803Z">
+<meta property="article:author" content="lxl">
+<meta property="article:tag" content="MIT 6.S081">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lingxling.github.io/images/xv6book/va.png">
+
+<link rel="canonical" href="https://lingxling.github.io/2022/45755/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>MIT 6.S081 学习总结（updating） | lingxling's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lingxling's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/45755/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="lxl">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lingxling's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MIT 6.S081 学习总结（updating）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-11-05 16:57:49" itemprop="dateCreated datePublished" datetime="2022-11-05T16:57:49+08:00">2022-11-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-13 18:04:49" itemprop="dateModified" datetime="2022-11-13T18:04:49+08:00">2022-11-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>参考资料：</p>
+<ul>
+<li>课程官方网页：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
+<li>xv6 book：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>xv6手册中文版：<a target="_blank" rel="noopener" href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
+<li>参考代码：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33894666/article/details/121625097">https://blog.csdn.net/qq_33894666/article/details/121625097</a></li>
+<li>参考书：《UNIX环境高级编程（第3版）》<span id="more"></span></li>
+</ul>
+<h1 id="1-Operating-system-interfaces"><a href="#1-Operating-system-interfaces" class="headerlink" title="1 Operating system interfaces"></a>1 Operating system interfaces</h1><h2 id="1-1-Processes-and-memory"><a href="#1-1-Processes-and-memory" class="headerlink" title="1.1 Processes and memory"></a>1.1 Processes and memory</h2><ul>
+<li><code>int fork()</code>：创建子进程，在父进程中的返回值是子进程的PID，在子进程中的返回值是0。<ul>
+<li><code>fork</code>函数创建新的子进程后，在很多情况下，子进程需要调用<code>exec</code>函数以执行另一个程序。</li>
+</ul>
+</li>
+<li><code>void exit(int status)</code>：终止当前进程，其操作包括调用各终止处理程序，然后关闭所有标准I&#x2F;O流等），<code>status</code>指示该进程是如何退出的，通常0指示正常退出的情况，1指示非正常退出的情况。<ul>
+<li>无论是否正常退出，终止该进程的父进程都能调用<code>wait</code>或<code>waitpid</code>函数取得其终止状态。</li>
+<li><code>_exit(int status)</code>：为进程提供无需运行终止处理程序或信号处理程序而最终只的方法。对标准I&#x2F;O流是否进行冲洗取决于实现。</li>
+<li>在<code>main</code>函数内执行<code>return</code>语句，等效于调用<code>exit</code>。</li>
+</ul>
+</li>
+<li><code>int wait(int *status)</code>：返回当前进程的已退出（或已杀死）子进程的PID，并将子进程的退出状态复制到传递给<code>wait</code>的地址。<ul>
+<li>如果调用方的子进程都没有退出，那么<code>wait</code>等待一个子进程退出；如果调用者没有子进程，<code>wait</code>立即返回-1。如果父进程不关心子进程的退出状态，它可以传递一个0地址给<code>wait</code>，即父进程中使用<code>wait(0)</code>。</li>
+<li>如果父进程在子进程之前停止，则子进程的父进程变为<code>init</code>状态（“这些进程由<code>init</code>进程收养”）。其操作过程大致是，在一个进程终止时，内核逐个检查所有活动进程，以判断它是否是正要终止进程的子进程。</li>
+<li>内核为每个终止子进程保存了一定量的信息，这些信息至少包括进程PID、该进程的终止状态以及该进程使用的CPU时间总量，当终止进程的父进程调用<code>wait</code>或者<code>waitpid</code>时，可以得到这些信息。一个已经终止，但是其父进程尚未对其进行善后处理（获取终止子进程的有关信息、释放它仍占用的资源）的进程被称为<strong>僵死进程</strong>。</li>
+</ul>
+</li>
+<li><code>int getpid()</code>：返回当前进程的PID。<ul>
+<li>Lab3-Speed up system calls (easy)中实现了对<code>getpid</code>方法的优化，使得进程可以在用户态就获取到自身的PID。简单地说，是给在进程的开始给进程分配了一个read-only的页，用于保存进程的PID，需要时就从这个页读取PID。</li>
+</ul>
+</li>
+<li><code>int sleep(int n)</code>：暂停当前进程，<code>n</code>指示暂停的时长。<ul>
+<li>Lab1-sleep (easy)涉及了该函数的用法</li>
+</ul>
+</li>
+<li><code>int exec(char *file, char *argv[])</code>：加载并执行可执行文件，<code>args</code>作为执行参数。<ul>
+<li>当进程调用<code>exec</code>函数时，该进程执行的程序完全替换为新程序，而新程序则从其main函数开始执行。</li>
+<li>调用<code>exec</code>并不创建新进程，所以调用前后进程的PID并不改变。</li>
+<li>在UNIX系统种有7种不同的<code>exec</code>函数可供使用，而xv6系统为了简便，统一为<code>exec</code>函数。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-2-I-x2F-O-and-File-descriptors"><a href="#1-2-I-x2F-O-and-File-descriptors" class="headerlink" title="1.2 I&#x2F;O and File descriptors"></a>1.2 I&#x2F;O and File descriptors</h2><ul>
+<li>文件描述符（file descriptors）：文件描述符是一个非负整数，表示进程可以读取或写入的、由内核管理的对象。进程可以通过打开一个<strong>文件</strong>、<strong>目录</strong>、<strong>设备</strong>，或创建一个<strong>管道</strong>，或复制一个已存在的描述符来获得一个文件描述符。<ul>
+<li>文件描述符接口将文件、管道和设备之间的差异抽象出来，使它们看起来都像字节流。</li>
+<li>进程从文件描述符0读取（标准输入），将输出写入文件描述符1（标准输出），并将错误消息写入文件描述符2（标准错误）。</li>
+<li><code>fork</code>复制进程后，父子进程在开始时拥有完全相同的打开文件和<strong>文件偏移量</strong>，并且父子进程之间<strong>共享</strong>文件偏移量。</li>
+<li><code>exec</code>替换了调用进程的内存，但保留其文件表。</li>
+<li><code>fork</code>和<code>exec</code>分离的用处之一在于，在这两个调用之间有机会对子进程进行I&#x2F;O重定向，而不会干扰父进程的I&#x2F;O设置。</li>
+</ul>
+</li>
+<li><code>int open(char *file, int flags)</code>：打开一个文件，<code>flags</code>指定打开的方式（例如：<code>O_RDONLY</code>, <code>O_WRONLY</code>等）。<ul>
+<li>由<code>open</code>函数返回的文件描述符一定是最小的可用描述符。</li>
+</ul>
+</li>
+<li><code>int read(int fd, char *buf, int n)</code>：从文件描述符fd读取最多n字节，将它们复制到buf，并返回读取的字节数。<ul>
+<li>从当前<strong>文件偏移量</strong>开始读取数据，然后将该偏移量前进读取的字节数。</li>
+<li>当没有更多的字节可读时，read返回0来表示文件的结束。</li>
+</ul>
+</li>
+<li><code>int write(int fd, char *buf, int n)</code>：将buf中的n字节写入文件描述符，并返回写入的字节数。<ul>
+<li>从当前<strong>文件偏移量</strong>开始写入数据，然后将该偏移量向前推进写入的字节数。</li>
+<li>只有发生错误时才会写入小于n字节的数据。</li>
+</ul>
+</li>
+<li><code>int lseek(int fd, int offset, int whence)</code>：为一个打开的文件显式设置文件偏移量。</li>
+<li><code>int close(int fd)</code>：关闭一个打开文件。当一个进程终止时，内核将自动关闭它所有的打开文件。</li>
+<li><code>int dup(int fd)</code>：复制一个现有的文件描述符，返回当前可用文件描述符中的最小数值。两个文件描述符<strong>共享文件偏移量</strong>。<ul>
+<li><code>int dup2(int fd, int fd2)</code>：可以用<code>fd2</code>参数指定新描述符的值，返回新的文件描述符。如果<code>fd2</code>已经打开，在先将其关闭。如果<code>fd</code>等于<code>fd2</code>，则<code>dup2</code>返回<code>fd2</code>，而不是关闭它。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将hello world输出到fd指定的对象</span></span><br><span class="line">fd = dup(<span class="number">1</span>);</span><br><span class="line">write(<span class="number">1</span>, <span class="string">&quot;hello &quot;</span>, <span class="number">6</span>);</span><br><span class="line">write(fd, <span class="string">&quot;world\n&quot;</span>, <span class="number">6</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h2 id="1-3-Pipes"><a href="#1-3-Pipes" class="headerlink" title="1.3 Pipes"></a>1.3 Pipes</h2><ul>
+<li><code>int pipe(int fd[2])</code>：调用<code>pipe</code>函数可以创建一个新的管道，数组<code>fd</code>记录读写文件描述符。<ul>
+<li>一般而言，<code>fd[0]</code>为读入端的文件描述符，<code>fd[1]</code>为写入端的文件描述符，<code>fd[1]</code>的输出时<code>fd[0]</code>的输入。</li>
+<li>如果没有可用的数据，则管道上的读入端将进入等待，直到有新数据写入或所有指向写入端的文件描述符都被关闭。</li>
+<li>当所有指向写入端的文件描述符都被关闭时，读入端将返回0，就像到达数据文件的末尾一样。</li>
+<li>管道只能在具有公共祖先的两个进程之间使用。通常，进程先调用<code>pipe</code>，接着调用<code>fork</code>，从而创建父子进程之间的IPC通道。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-4-File-system"><a href="#1-4-File-system" class="headerlink" title="1.4 File system"></a>1.4 File system</h2><p>文件本身和文件的名字是不同的：同一个底层文件（叫做inode，索引结点）可以有多个名字（叫做link，链接）。每个链接都由目录中的一个条目组成，该条目包含一个文件名和一个对inode的引用。inode保存关于文件的元数据（metadata），包括其类型（文件&#x2F;目录&#x2F;设备…）、长度、文件内容在磁盘上的位置以及指向文件的链接数。每个inode由唯一的inode编号标识。</p>
+<ul>
+<li><code>int stat(char *file, struct stat *st)</code>：根据<strong>文件的完全路径</strong>，获取有关信息保存在<code>st</code>中。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> T_DIR     1   <span class="comment">// Directory</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_FILE    2   <span class="comment">// File</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_DEVICE  3   <span class="comment">// Device</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> dev;     <span class="comment">// File system&#x27;s disk device</span></span><br><span class="line">  uint ino;    <span class="comment">// Inode number</span></span><br><span class="line">  <span class="type">short</span> type;  <span class="comment">// Type of file</span></span><br><span class="line">  <span class="type">short</span> nlink; <span class="comment">// Number of links to file</span></span><br><span class="line">  uint64 size; <span class="comment">// Size of file in bytes</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><code>int fstat(int fd, struct stat *st)</code>：<code>fstat</code>与<code>stat</code>的不同在于，<code>fstat</code>获的参数是<strong>文件描述符</strong>。<ul>
+<li>Lab1-find (moderate)中，<code>fstat</code>函数是读入fd指向文件的更具体的info，然后判断指向文件是什么类型，并进一步处理。</li>
+</ul>
+</li>
+<li><code>int link(char *file1, char *file2)</code>：创建新文件名<code>file2</code>，指向与现有文件名<code>file1</code>相同的inode。<ul>
+<li>通过<code>fstat</code>获取<code>ino</code>，可以知道<code>file1</code>和<code>file2</code>引用相同的底层内容，同时<code>nlink</code>计数将被置为2。</li>
+</ul>
+</li>
+<li><code>int unlink(char *file)</code>：删除链接。<ul>
+<li>只有当文件的链接数为零且没有文件描述符引用时，文件的inode和包含其内容的磁盘空间才会被释放。</li>
+</ul>
+</li>
+<li><code>int chdir(char *dir)</code>更改当前工作目录</li>
+<li><code>int mkdir(char *dir)</code>：创建一个新目录</li>
+<li><code>int mknod(char *file, int, int)</code>：创建一个引用设备的特殊文件。<ul>
+<li>与设备文件相关联的是主设备号和次设备号(mknod的两个参数)，它们唯一地标识了一个内核设备。</li>
+<li>当进程稍后打开设备文件时，内核将使用内核设备实现read和write系统调用，而不是使用文件系统。</li>
+</ul>
+</li>
+</ul>
+<h1 id="2-Operating-system-organization"><a href="#2-Operating-system-organization" class="headerlink" title="2 Operating system organization"></a>2 Operating system organization</h1><h2 id="2-1-Abstracting-physical-resources"><a href="#2-1-Abstracting-physical-resources" class="headerlink" title="2.1 Abstracting physical resources"></a>2.1 Abstracting physical resources</h2><ul>
+<li>为什么需要operating system<ul>
+<li>为了简化开发，需要提供一套能将资源抽象化的方法。</li>
+<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须可靠且良好运行：需要适时放弃处理资源、并且程序不要出bug（一出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离。</li>
+<li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-User-mode-supervisor-mode-and-system-calls"><a href="#2-2-User-mode-supervisor-mode-and-system-calls" class="headerlink" title="2.2 User mode, supervisor mode, and system calls"></a>2.2 User mode, supervisor mode, and system calls</h2><ul>
+<li>强隔离要求在操作系统和应用程序之间有硬边界，才能保证应用程序不能修改（甚至读取）操作系统的数据结构和指令，以及应用程序不能访问其他进程的内存。</li>
+<li>RISC-V有三种<strong>CPU可以执行指令的模式</strong>：机器模式（machine mode）、管理模式（supervisor mode）和用户模式（user mode），其权限由高到低。<ul>
+<li>在机器模式下执行的指令具有完全特权；CPU在机器模式下启动。机器模式主要用于配置计算机。</li>
+<li>在管理模式下，CPU被允许执行特权指令，例如启用和禁用中断等。管理模式下的软件称为在<strong>内核空间</strong>中运行。在内核空间（或管理模式）中运行的软件被称为<strong>内核</strong>。</li>
+<li>应用程序一般只能运行用户模式的指令，并称其为在<strong>用户空间</strong>中运行。如果应用程序需要使用内核函数（如<code>read</code>系统调用），CPU必须先切换管理模式，再由内核验证系统调用的参数，决定是否执行该指令。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-3-Kernel-organization"><a href="#2-3-Kernel-organization" class="headerlink" title="2.3 Kernel organization"></a>2.3 Kernel organization</h2><ul>
+<li>宏内核：整个操作系统都驻留在内核中，这样所有系统调用的实现都以管理模式运行。</li>
+<li>微内核：最大限度地减少在管理模式下运行的操作系统代码量，并在用户模式下执行大部分操作系统</li>
+</ul>
+<h2 id="2-4-Process-overview"><a href="#2-4-Process-overview" class="headerlink" title="2.4 Process overview"></a>2.4 Process overview</h2><ul>
+<li>进程是操作系统中资源分配的最小单位，线程是操作系统中调度的最小单位，线程之间共享进程资源。</li>
+<li>进程有两个栈区：用户栈区和内核栈区。当进程进入内核（由于系统调用或者中断）时，内核代码在内核栈上执行，此时它的用户栈仍然包含保存的数据，只是不处于活动状态。</li>
+<li>进程可以通过<code>ecall</code>提高硬件特权级别、进行系统调用，程序计数器（PC）更改为内核定义的入口点，入口点的代码切换到内核栈。系统调用完成时，切回用户栈，并通过调用<code>sret</code>指令返回用户空间，该指令降低了硬件特权级别，并在系统调用指令刚结束时恢复执行用户指令。</li>
+</ul>
+<h1 id="3-Page-tables"><a href="#3-Page-tables" class="headerlink" title="3 Page tables"></a>3 Page tables</h1><h2 id="3-1-Paging-hardware"><a href="#3-1-Paging-hardware" class="headerlink" title="3.1 Paging hardware"></a>3.1 Paging hardware</h2><p><img data-src="/../images/xv6book/va.png"></p>
+<h2 id="3-2-Kernel-address-space"><a href="#3-2-Kernel-address-space" class="headerlink" title="3.2 Kernel address space"></a>3.2 Kernel address space</h2><p>QEMU模拟了一台计算机，QEMU将设备接口作为<em>内存映射</em>控制寄存器（<em>memory-mapped</em> control registers）暴露给软件，这些寄存器位于物理地址空间0x80000000以下。内核可以通过读取&#x2F;写入这些特殊的物理地址与设备交互；这种读取和写入与设备硬件而不是RAM通信。内核使用<strong>直接映射</strong>获取<strong>内存</strong>和<strong>内存映射设备寄存器</strong>（PHYSTOP以下的地址都是直接映射），即将资源映射到等于物理地址的虚拟地址。例如：</p>
+<ul>
+<li>内核本身在虚拟地址空间和物理内存中都位于<code>KERNBASE=0x80000000</code>。</li>
+<li>当<code>fork</code>为子进程分配用户内存时，分配器返回该内存的物理地址。</li>
+</ul>
+<p>有几个内核虚拟地址不是直接映射：</p>
+<ul>
+<li>The trampoline page：该page在虚拟地址空间的顶部。但是对应的物理页面在虚拟地址空间中映射了两次：一次在虚拟地址空间的顶部，一次直接映射。</li>
+<li>The kernel stack pages：每个进程都有自己的内核栈，进程之间的内核栈会被映射到偏高一些的位置，从而留下guard page的空间。guard page是保护页，当某个进程发生内核栈溢出时，保护其他进程的内核栈不被影响。注意，guard page不会浪费物理内存，它只是占据了虚拟地址空间的一段靠后的地址，但是并不映射到物理地址空间。<br><img data-src="/../images/xv6book/kernel_space.png"></li>
+</ul>
+<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。<br><img data-src="/../images/xv6book/user_space.png"></p>
+<h1 id="4-Traps-and-system-calls"><a href="#4-Traps-and-system-calls" class="headerlink" title="4 Traps and system calls"></a>4 Traps and system calls</h1><h2 id="4-1-RISC-V-trap-machinery"><a href="#4-1-RISC-V-trap-machinery" class="headerlink" title="4.1 RISC-V trap machinery"></a>4.1 RISC-V trap machinery</h2><h2 id="4-2-Traps-from-user-space"><a href="#4-2-Traps-from-user-space" class="headerlink" title="4.2 Traps from user space"></a>4.2 Traps from user space</h2><h2 id="4-3-Traps-from-kernel-space"><a href="#4-3-Traps-from-kernel-space" class="headerlink" title="4.3 Traps from kernel space"></a>4.3 Traps from kernel space</h2><h2 id="4-4-Page-fault-exceptions"><a href="#4-4-Page-fault-exceptions" class="headerlink" title="4.4 Page-fault exceptions"></a>4.4 Page-fault exceptions</h2><h1 id="5-Interrupts-and-device-drivers"><a href="#5-Interrupts-and-device-drivers" class="headerlink" title="5 Interrupts and device drivers"></a>5 Interrupts and device drivers</h1><h1 id="6-Locking"><a href="#6-Locking" class="headerlink" title="6 Locking"></a>6 Locking</h1><h1 id="7-Scheduling"><a href="#7-Scheduling" class="headerlink" title="7 Scheduling"></a>7 Scheduling</h1><h1 id="8-File-system"><a href="#8-File-system" class="headerlink" title="8 File system"></a>8 File system</h1>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>lxl
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://lingxling.github.io/2022/45755/" title="MIT 6.S081 学习总结（updating）">https://lingxling.github.io/2022/45755/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MIT-6-S081/" rel="tag"># MIT 6.S081</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/60804/" rel="prev" title="makefile初学笔记">
+      <i class="fa fa-chevron-left"></i> makefile初学笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Operating-system-interfaces"><span class="nav-text">1 Operating system interfaces</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Processes-and-memory"><span class="nav-text">1.1 Processes and memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-I-x2F-O-and-File-descriptors"><span class="nav-text">1.2 I&#x2F;O and File descriptors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Pipes"><span class="nav-text">1.3 Pipes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-File-system"><span class="nav-text">1.4 File system</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Operating-system-organization"><span class="nav-text">2 Operating system organization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Abstracting-physical-resources"><span class="nav-text">2.1 Abstracting physical resources</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-User-mode-supervisor-mode-and-system-calls"><span class="nav-text">2.2 User mode, supervisor mode, and system calls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Kernel-organization"><span class="nav-text">2.3 Kernel organization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-Process-overview"><span class="nav-text">2.4 Process overview</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-Page-tables"><span class="nav-text">3 Page tables</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Paging-hardware"><span class="nav-text">3.1 Paging hardware</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Kernel-address-space"><span class="nav-text">3.2 Kernel address space</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Process-address-space"><span class="nav-text">3.3 Process address space</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Traps-and-system-calls"><span class="nav-text">4 Traps and system calls</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-RISC-V-trap-machinery"><span class="nav-text">4.1 RISC-V trap machinery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-Traps-from-user-space"><span class="nav-text">4.2 Traps from user space</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-Traps-from-kernel-space"><span class="nav-text">4.3 Traps from kernel space</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-Page-fault-exceptions"><span class="nav-text">4.4 Page-fault exceptions</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Interrupts-and-device-drivers"><span class="nav-text">5 Interrupts and device drivers</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-Locking"><span class="nav-text">6 Locking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-Scheduling"><span class="nav-text">7 Scheduling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-File-system"><span class="nav-text">8 File system</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lxl"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">lxl</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/lingxling" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;lingxling" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lingxling@mail3.sysu.edu.cn" title="E-Mail → mailto:lingxling@mail3.sysu.edu.cn" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lxl</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'e02cfbae05b03cacb114',
+      clientSecret: '26906bf85a5c1f43c3d6ae205ba1f3c7cbf961e1',
+      repo        : 'lingxling.github.io',
+      owner       : 'lingxling',
+      admin       : ['lingxling'],
+      id          : '6ea34220b9d14b9fd986786fb5adbe74',
+        language: 'en',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
