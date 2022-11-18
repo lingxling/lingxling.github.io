@@ -405,7 +405,7 @@
 <h1 id="2-Operating-system-organization"><a href="#2-Operating-system-organization" class="headerlink" title="2 Operating system organization"></a>2 Operating system organization</h1><h2 id="2-1-Abstracting-physical-resources"><a href="#2-1-Abstracting-physical-resources" class="headerlink" title="2.1 Abstracting physical resources"></a>2.1 Abstracting physical resources</h2><ul>
 <li>为什么需要operating system<ul>
 <li>为了简化开发，需要提供一套能将资源抽象化的方法。</li>
-<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须可靠且良好运行：需要适时放弃处理资源、并且程序不要出bug（一出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离。</li>
+<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须可靠且良好运行：需要适时放弃处理资源、并且程序不要出bug（一旦出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离。</li>
 <li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序。</li>
 </ul>
 </li>
@@ -414,7 +414,7 @@
 <li>强隔离要求在操作系统和应用程序之间有硬边界，才能保证应用程序不能修改（甚至读取）操作系统的数据结构和指令，以及应用程序不能访问其他进程的内存。</li>
 <li>RISC-V有三种<strong>CPU可以执行指令的模式</strong>：机器模式（machine mode）、管理模式（supervisor mode）和用户模式（user mode），其权限由高到低。<ul>
 <li>在机器模式下执行的指令具有完全特权；CPU在机器模式下启动。机器模式主要用于配置计算机。</li>
-<li>在管理模式下，CPU被允许执行特权指令，例如启用和禁用中断等。管理模式下的软件称为在<strong>内核空间</strong>中运行。在内核空间（或管理模式）中运行的软件被称为<strong>内核</strong>。</li>
+<li>在管理模式下，CPU被允许执行特权指令，例如启用和禁用中断等。管理模式下的程序称为在<strong>内核空间</strong>中运行。在内核空间（或管理模式）中运行的程序被称为<strong>内核</strong>。</li>
 <li>应用程序一般只能运行用户模式的指令，并称其为在<strong>用户空间</strong>中运行。如果应用程序需要使用内核函数（如<code>read</code>系统调用），CPU必须先切换管理模式，再由内核验证系统调用的参数，决定是否执行该指令。</li>
 </ul>
 </li>
@@ -428,8 +428,11 @@
 <li>进程有两个栈区：用户栈区和内核栈区。当进程进入内核（由于系统调用或者中断）时，内核代码在内核栈上执行，此时它的用户栈仍然包含保存的数据，只是不处于活动状态。</li>
 <li>进程可以通过<code>ecall</code>提高硬件特权级别、进行系统调用，程序计数器（PC）更改为内核定义的入口点，入口点的代码切换到内核栈。系统调用完成时，切回用户栈，并通过调用<code>sret</code>指令返回用户空间，该指令降低了硬件特权级别，并在系统调用指令刚结束时恢复执行用户指令。</li>
 </ul>
-<h1 id="3-Page-tables"><a href="#3-Page-tables" class="headerlink" title="3 Page tables"></a>3 Page tables</h1><h2 id="3-1-Paging-hardware"><a href="#3-1-Paging-hardware" class="headerlink" title="3.1 Paging hardware"></a>3.1 Paging hardware</h2><p><img data-src="/../images/xv6book/va.png"></p>
-<h2 id="3-2-Kernel-address-space"><a href="#3-2-Kernel-address-space" class="headerlink" title="3.2 Kernel address space"></a>3.2 Kernel address space</h2><p>QEMU模拟了一台计算机，QEMU将设备接口作为<em>内存映射</em>控制寄存器（<em>memory-mapped</em> control registers）暴露给软件，这些寄存器位于物理地址空间0x80000000以下。内核可以通过读取&#x2F;写入这些特殊的物理地址与设备交互；这种读取和写入与设备硬件而不是RAM通信。内核使用<strong>直接映射</strong>获取<strong>内存</strong>和<strong>内存映射设备寄存器</strong>（PHYSTOP以下的地址都是直接映射），即将资源映射到等于物理地址的虚拟地址。例如：</p>
+<h1 id="3-Page-tables"><a href="#3-Page-tables" class="headerlink" title="3 Page tables"></a>3 Page tables</h1><h2 id="3-1-Paging-hardware"><a href="#3-1-Paging-hardware" class="headerlink" title="3.1 Paging hardware"></a>3.1 Paging hardware</h2><ul>
+<li><code>satp</code>寄存器：存放根页表在物理内存中的地址。每个RISC-V CPU都有自己的<code>satp</code>寄存器（在运行时切换指向的内存地址），一个CPU可以使用自己的<code>satp</code>指向的页表转换后续指令生成的所有地址。不同的CPU可以运行不同的进程，每个进程都有自己的页表描述的私有地址空间。</li>
+</ul>
+<p><img data-src="/../images/xv6book/va.png"></p>
+<h2 id="3-2-Kernel-address-space"><a href="#3-2-Kernel-address-space" class="headerlink" title="3.2 Kernel address space"></a>3.2 Kernel address space</h2><p>QEMU模拟了一台计算机，QEMU将设备接口作为<em>内存映射</em>控制寄存器（<em>memory-mapped</em> control registers）暴露给应用，这些寄存器位于物理地址空间0x80000000以下。内核可以通过读取&#x2F;写入这些特殊的物理地址与设备交互；这种读取和写入与设备硬件而不是RAM通信。内核使用<strong>直接映射</strong>获取<strong>内存</strong>和<strong>内存映射设备寄存器</strong>（PHYSTOP以下的地址都是直接映射），即将资源映射到等于物理地址的虚拟地址。例如：</p>
 <ul>
 <li>内核本身在虚拟地址空间和物理内存中都位于<code>KERNBASE=0x80000000</code>。</li>
 <li>当<code>fork</code>为子进程分配用户内存时，分配器返回该内存的物理地址。</li>
@@ -439,8 +442,52 @@
 <li>The trampoline page：该page在虚拟地址空间的顶部。但是对应的物理页面在虚拟地址空间中映射了两次：一次在虚拟地址空间的顶部，一次直接映射。</li>
 <li>The kernel stack pages：每个进程都有自己的内核栈，进程之间的内核栈会被映射到偏高一些的位置，从而留下guard page的空间。guard page是保护页，当某个进程发生内核栈溢出时，保护其他进程的内核栈不被影响。注意，guard page不会浪费物理内存，它只是占据了虚拟地址空间的一段靠后的地址，但是并不映射到物理地址空间。<br><img data-src="/../images/xv6book/kernel_space.png"></li>
 </ul>
-<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。<br><img data-src="/../images/xv6book/user_space.png"></p>
-<h1 id="4-Traps-and-system-calls"><a href="#4-Traps-and-system-calls" class="headerlink" title="4 Traps and system calls"></a>4 Traps and system calls</h1><h2 id="4-1-RISC-V-trap-machinery"><a href="#4-1-RISC-V-trap-machinery" class="headerlink" title="4.1 RISC-V trap machinery"></a>4.1 RISC-V trap machinery</h2><h2 id="4-2-Traps-from-user-space"><a href="#4-2-Traps-from-user-space" class="headerlink" title="4.2 Traps from user space"></a>4.2 Traps from user space</h2><h2 id="4-3-Traps-from-kernel-space"><a href="#4-3-Traps-from-kernel-space" class="headerlink" title="4.3 Traps from kernel space"></a>4.3 Traps from kernel space</h2><h2 id="4-4-Page-fault-exceptions"><a href="#4-4-Page-fault-exceptions" class="headerlink" title="4.4 Page-fault exceptions"></a>4.4 Page-fault exceptions</h2><h1 id="5-Interrupts-and-device-drivers"><a href="#5-Interrupts-and-device-drivers" class="headerlink" title="5 Interrupts and device drivers"></a>5 Interrupts and device drivers</h1><h1 id="6-Locking"><a href="#6-Locking" class="headerlink" title="6 Locking"></a>6 Locking</h1><h1 id="7-Scheduling"><a href="#7-Scheduling" class="headerlink" title="7 Scheduling"></a>7 Scheduling</h1><h1 id="8-File-system"><a href="#8-File-system" class="headerlink" title="8 File system"></a>8 File system</h1>]]></content>
+<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始，可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。<br><img data-src="/../images/xv6book/user_space.png"></p>
+<h1 id="4-Traps-and-system-calls"><a href="#4-Traps-and-system-calls" class="headerlink" title="4 Traps and system calls"></a>4 Traps and system calls</h1><h2 id="4-1-RISC-V-trap-machinery"><a href="#4-1-RISC-V-trap-machinery" class="headerlink" title="4.1 RISC-V trap machinery"></a>4.1 RISC-V trap machinery</h2><p>内核通过向控制寄存器写入内容来告诉CPU如何处理trap，以下是最重要的一些寄存器概述。</p>
+<ul>
+<li><code>stvec</code>：内核在这里写入其trap处理程序的地址。</li>
+<li><code>sepc</code>：trap发生时，用于保存程序计数器pc。</li>
+<li><code>scause</code>：放置描述trap原因的数字。</li>
+<li><code>sscratch</code>：内核在这里放置一个值，这个值在trap处理程序一开始就会派上用场。</li>
+<li><code>sstatus</code>：<code>sstatus</code>中的SIE位控制设备中断是否启用。SPP位指示trap是来自用户模式还是管理模式。</li>
+</ul>
+<h2 id="4-2-Traps-from-user-space"><a href="#4-2-Traps-from-user-space" class="headerlink" title="4.2 Traps from user space"></a>4.2 Traps from user space</h2><p>如果应用程序发出系统调用（<code>ecall</code>指令），或者做了非法的事情，或者设备产生终端（读写磁盘），那么在用户空间中执行时就可能产生trap。来自用户空间的trap的高级路径是：uservec（kernel&#x2F;trampoline.S:16），然后是usertrap（kernel&#x2F;trap.c:37）；返回时，先是usertrapret（kernel&#x2F;trap.c:90），然后是userret（kernel&#x2F;trampoline.S:16）。</p>
+<!--
+- `uservec`是`stvec`指向的一段trap向量指令。由于RISC-V硬件本身不会主动切换页表，所以`uservec`这段指令必须在用户页表中能找到映射。这段指令需要能把`satp`从用户进程根页表切换到内核根页表、保存32个user registers中的内容。在进入用户空间之前，`sscratch`就被设置为指向当前进程的`trapframe`（每个进程都有独立的`trapframe`），该`trapframe`有足够的空间保存32个user registers。当创建一个进程时，xv6为每个进程的`trapframe`分配一个page，并安排它始终映射在用户虚拟地址`TRAPFRAME`（`TRAPFRAME`是一个地址，`trapframe`是一个帧）。因此在交换`a0`和`sscratch`之后，`a0`持有指向当前进程trap帧的指针。`trapframe`包含指向当前进程内核栈的指针、当前CPU的`hartid`、`usertrap`的地址和内核页表的地址。`uservec`取得这些值，将`satp`切换到内核页表，并调用`usertrap`。
+- `usertrap`的任务是确定trap的原因、处理并返回。
+- `uservec`
+- trampoline page可以解决上述问题。xv6将trampoline page映射到内核页表和每个用户页表中相同的虚拟地址（即`TRAMPOLINE`）。-->
+
+<h2 id="4-3-Traps-from-kernel-space"><a href="#4-3-Traps-from-kernel-space" class="headerlink" title="4.3 Traps from kernel space"></a>4.3 Traps from kernel space</h2><p>xv6根据执行的是用户代码还是内核代码，对CPU的trap寄存器的配置有所不同。当在CPU上执行内核时，内核将<code>stvec</code>指向<code>kernelvec</code>(kernel&#x2F;kernelvec.S:10)的汇编代码。由于xv6已经在内核中，<code>kernelvec</code>可以依赖于设置为内核页表的<code>satp</code>，以及指向有效内核栈的栈指针。<code>kernelvec</code>保存所有寄存器，以便被中断的代码最终可以不受干扰地恢复。</p>
+<h2 id="4-4-Page-fault-exceptions"><a href="#4-4-Page-fault-exceptions" class="headerlink" title="4.4 Page-fault exceptions"></a>4.4 Page-fault exceptions</h2><ul>
+<li>copy on write (COW) fork：<code>fork</code>之后的父子进程共享所有物理页面（只读权限），只有在需要写入时，才为父子进程分配新的、权限为读写的物理页面。<ul>
+<li>RISC-V有三种不同的页面错误: 加载页面错误（当加载指令无法转换其虚拟地址时），存储页面错误（当存储指令无法转换其虚拟地址时）和指令页面错误（当指令的地址无法转换时）。<code>scause</code>寄存器中的值指示页面错误的类型，<code>stval</code>寄存器包含无法翻译的地址。</li>
+<li>当子级或父级执行存储指令时，RISC-V CPU引发页面错误异常。为了响应此异常，内核复制包含错误地址的页面。它在子级的地址空间中映射一个权限为读&#x2F;写的副本，在父级的地址空间中映射另一个权限为读&#x2F;写的副本。</li>
+</ul>
+</li>
+<li>lazy allocation：内核仅在应用程序实际使用内存时才分配。</li>
+<li>利用页面故障的另一个广泛使用的功能是从磁盘分页。当进程读取到存在磁盘上的页时，会产生页面错误，然后内核会检查磁盘上是否有这个页面，如果有就将其读入内存。</li>
+</ul>
+<h1 id="5-Interrupts-and-device-drivers"><a href="#5-Interrupts-and-device-drivers" class="headerlink" title="5 Interrupts and device drivers"></a>5 Interrupts and device drivers</h1><ul>
+<li>中断（interrupt）：是为了device与CPU之间的通信，比如时钟中断，硬盘读写服务请求中断等。</li>
+<li>异常（exception）：CPU执行时出错，发出中断（也可称为内部中断），是被动发生中断事件。</li>
+<li>陷入（trap）：CPU跳转使程序主动进入某一条指令流。</li>
+</ul>
+<h2 id="5-1-Concurrency-in-drivers"><a href="#5-1-Concurrency-in-drivers" class="headerlink" title="5.1 Concurrency in drivers"></a>5.1 Concurrency in drivers</h2><p>xv6的main函数调用<code>consoleinit</code>（kernel&#x2F;console.c:184）来初始化UART硬件。UART硬件在应用程序中被视为一组内存映射的控制寄存器。xv6的shell通过<code>init.c</code> (user&#x2F;init.c:19)中打开的文件描述符从控制台读取输入。当用户输入一个字符时，UART硬件要求RISC-V发出一个中断，从而激活xv6的trap处理程序。如果是UART导致的中断，devintr将调用<code>uartintr</code>（kernel&#x2F;uart.c:180）从UART硬件读取所有等待输入的字符，并将它们交给<code>consoleintr</code>（consoleintr的工作是在cons.buf中积累输入字符）。当换行符到达时，<code>consoleintr</code>唤醒一个等待的<code>consoleread</code>（若有）。一旦被唤醒，<code>consoleread</code>将监视cons.buf中的一整行，将其复制到用户空间，并返回（通过系统调用机制）给用户空间。对<code>read</code>的调用实现了从内核流向<code>consoleread</code>（kernel&#x2F;console.c:82）的数据通路。</p>
+<p>这里有3个并发风险：来自不同CPU的两个进程可能同时调用<code>consoleread</code>；硬件可能会在<code>consoleread</code>正在执行时要求CPU传递控制台中断；硬件可能在当前CPU正在执行consoleread时向其他CPU传递控制台中断。锁（Lock）可以用于解决上述问题（chapter 6）。此外，还可能出现的情形是，某个进程正在等待来自设备的输入，但是输入的中断信号恰好在另一个进程运行时到达。为了解决该问题，中断处理程序不被允许考虑那些已经中断的进程或代码。中断处理程序通常做相对较少的工作，并唤醒上半部分代码来完成其余工作。</p>
+<h2 id="5-2-Timer-interrupts"><a href="#5-2-Timer-interrupts" class="headerlink" title="5.2 Timer interrupts"></a>5.2 Timer interrupts</h2><p>RISC-V要求定时器中断在机器模式（而非管理模式）进行。RISC-V机器模式无需分页即可执行，并且有一组单独的控制寄存器，因此在机器模式下运行普通的xv6内核代码是不实际的。xv6处理定时器中断完全不同于trap机制。相关代码在<code>kernel/start.c</code>，基本处理过程为：进行CLINT（core-local interruptor）硬件编程，以便在特定延迟后生成中断；设置一个scratch区域，类似trapframe，用于保存user registers和CLINT寄存器的地址。start将mtvec设置为timervec，并enable定时器中断。</p>
+<p>有一个问题是，计时器中断可能发生在用户或内核代码正在执行的任何时候，但是内核又无法在临界区操作期间禁用计时器中断。为了解决这个问题，基本策略是计时器中断处理程序要求RISC-V发出software interrupt，然后立即返回。接着，RISC-V用普通陷阱机制将software interrupt传递给内核，并允许内核禁用它们。</p>
+<h1 id="6-Locking"><a href="#6-Locking" class="headerlink" title="6 Locking"></a>6 Locking</h1><h2 id="6-1-Race-conditions-and-locks"><a href="#6-1-Race-conditions-and-locks" class="headerlink" title="6.1 Race conditions and locks"></a>6.1 Race conditions and locks</h2><p>Race conditions是指多个进程同时读写某些共享数据（至少有一个写入）的情况。race通常包含bug：要么丢失更新，要么读取未完成更新的数据结构。race的结果取决于进程运行时处理器的状态。避免竞争的通常方法是使用锁。</p>
+<ul>
+<li>spinlocks：循环询问以获取锁。</li>
+</ul>
+<p>在某些情况下，某个进程可能长时间占有锁（例如在磁盘上读写文件内容时保持文件锁定）。如果有其他进程想获得锁，就需要长时间保持spinlock询问，这会导致进程在获取锁时浪费大量CPU资源进行自旋询问。此外，一个进程在持有spinlock的同时不能让出（yield）CPU，但是人们又希望持有锁的进程等待磁盘I&#x2F;O时，其他进程可以使用CPU。在持有spinlock时让出CPU是非法的：如果其他进程试图获取spinlock，可能会导致deadlock（deadlock是指两个进程互相等待对方释放资源的情形）。</p>
+<ul>
+<li>sleep-locks：询问获取锁，失败后进入休眠状态。</li>
+</ul>
+<h2 id="6-2-Locks-and-interrupt-handlers"><a href="#6-2-Locks-and-interrupt-handlers" class="headerlink" title="6.2 Locks and interrupt handlers"></a>6.2 Locks and interrupt handlers</h2><p>spinlock和中断的交互引起了潜在危险：令<code>sys_sleep</code>持有锁<code>tickslock</code>，且它的CPU被计时器中断；<code>clockintr</code>会尝试获取<code>tickslock</code>，但是因为<code>tickslock</code>被<code>sys_sleep</code>持有，所以<code>clockintr</code>会被阻塞；而<code>sys_sleep</code>只有在<code>clockintr</code>返回后才能继续运行；因此会导致deadlock。为了避免上述情况，必须保证：如果一个spinlock被某个中断处理程序所使用，那么CPU必须保证在启用中断的情况下永远也不能持有该锁。<code>acquire</code>使用<code>push_off</code>、<code>release</code>使用<code>pop_off</code>来跟踪当前CPU上lock的嵌套级别。注意，<code>push_off</code>必须在上锁之前调用，<code>pop_off</code>必须在解锁之后调用，以避免出现CPU持有锁又允许启用中断的窗口期。</p>
+<p>此外，在使用<code>acquire</code>和<code>release</code>时，必须保证编译器不会重排指令。为此，可以使用<code>__sync_synchronize()</code>，告诉编译器和CPU不要跨障碍重新排序<code>load</code>或<code>store</code>指令。</p>
+<h1 id="7-Scheduling"><a href="#7-Scheduling" class="headerlink" title="7 Scheduling"></a>7 Scheduling</h1><h1 id="8-File-system"><a href="#8-File-system" class="headerlink" title="8 File system"></a>8 File system</h1>]]></content>
       <categories>
         <category>学习笔记</category>
       </categories>
@@ -566,7 +613,7 @@
 <h3 id="2-3-3-CASE表达式"><a href="#2-3-3-CASE表达式" class="headerlink" title="2.3.3 CASE表达式"></a>2.3.3 CASE表达式</h3><p>根据数据转换为不同结果：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 查询各分数段的人数、课程号和课程名称</span></span><br><span class="line"><span class="keyword">SELECT</span> sc.课程号, c.课程名称,</span><br><span class="line">  <span class="built_in">SUM</span>(<span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> 成绩 <span class="keyword">BETWEEN</span> <span class="number">80</span> <span class="keyword">AND</span> <span class="number">100</span> <span class="keyword">THEN</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span></span><br><span class="line">      ) <span class="keyword">AS</span> <span class="string">&#x27;[100-80]&#x27;</span>,</span><br><span class="line">  <span class="built_in">SUM</span>(<span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> 成绩<span class="operator">&gt;=</span><span class="number">60</span> <span class="keyword">AND</span> 成绩<span class="operator">&lt;</span><span class="number">80</span> <span class="keyword">THEN</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span></span><br><span class="line">      ) <span class="keyword">AS</span> <span class="string">&#x27;[80-60]&#x27;</span>,</span><br><span class="line">  <span class="built_in">SUM</span>(<span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> 成绩<span class="operator">&lt;</span><span class="number">60</span> <span class="keyword">THEN</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span></span><br><span class="line">      ) <span class="keyword">AS</span> <span class="string">&#x27;[&lt;60]&#x27;</span></span><br><span class="line"><span class="keyword">FROM</span> score <span class="keyword">AS</span> sc <span class="keyword">JOIN</span> course <span class="keyword">AS</span> c</span><br><span class="line"><span class="keyword">ON</span> sc.课程号 <span class="operator">=</span> c.课程号</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> sc.课程号, c.课程名称;</span><br></pre></td></tr></table></figure>
 
-<h1 id="3-修改数据和数据表"><a href="#3-修改数据和数据表" class="headerlink" title="3 修改数据和数据表"></a>3 修改数据和数据表</h1><p>基本的<code>UPDATE</code>语句由三部分组成：要更新的表，列名和它们的新值；确定要更新哪些行的过滤条件：</p>
+<h1 id="3-修改数据和数据表"><a href="#3-修改数据和数据表" class="headerlink" title="3 修改数据和数据表"></a>3 修改数据和数据表</h1><p>基本的<code>UPDATE</code>语句由三部分组成：要更新的表，列名和它们的新值，确定要更新哪些行的过滤条件：</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> [tableName]</span><br><span class="line"><span class="keyword">SET</span> [field]</span><br><span class="line"><span class="keyword">WHERE</span> [<span class="keyword">condition</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">-- e.g.,</span></span><br><span class="line"><span class="keyword">UPDATE</span> student</span><br><span class="line"><span class="keyword">SET</span> 姓名<span class="operator">=</span><span class="string">&#x27;赵五&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> 学号<span class="operator">=</span><span class="string">&#x27;11&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
 <h1 id="4-删除数据和数据表"><a href="#4-删除数据和数据表" class="headerlink" title="4 删除数据和数据表"></a>4 删除数据和数据表</h1><h2 id="4-1-DELETE"><a href="#4-1-DELETE" class="headerlink" title="4.1 DELETE"></a>4.1 DELETE</h2><p>用于删除表中的特定数据：</p>
@@ -679,5 +726,10 @@
       <tags>
         <tag>Vim</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>mits081-lab4</title>
+    <url>/2022/52217/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>

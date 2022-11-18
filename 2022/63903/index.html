@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://lingxling.github.io/images/sql/right_join.png">
 <meta property="og:image" content="https://lingxling.github.io/images/sql/full_join.png">
 <meta property="article:published_time" content="2022-10-27T12:01:09.000Z">
-<meta property="article:modified_time" content="2022-10-30T08:03:56.504Z">
+<meta property="article:modified_time" content="2022-11-18T15:24:59.989Z">
 <meta property="article:author" content="lxl">
 <meta property="article:tag" content="SQL">
 <meta name="twitter:card" content="summary">
@@ -224,7 +224,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-30 16:03:56" itemprop="dateModified" datetime="2022-10-30T16:03:56+08:00">2022-10-30</time>
+                <time title="Modified: 2022-11-18 23:24:59" itemprop="dateModified" datetime="2022-11-18T23:24:59+08:00">2022-11-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -295,7 +295,7 @@
 <h3 id="2-3-3-CASE表达式"><a href="#2-3-3-CASE表达式" class="headerlink" title="2.3.3 CASE表达式"></a>2.3.3 CASE表达式</h3><p>根据数据转换为不同结果：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询各分数段的人数、课程号和课程名称</span></span><br><span class="line"><span class="keyword">SELECT</span> sc.课程号, c.课程名称,</span><br><span class="line">  <span class="built_in">SUM</span>(<span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> 成绩 <span class="keyword">BETWEEN</span> <span class="number">80</span> <span class="keyword">AND</span> <span class="number">100</span> <span class="keyword">THEN</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span></span><br><span class="line">      ) <span class="keyword">AS</span> <span class="string">&#x27;[100-80]&#x27;</span>,</span><br><span class="line">  <span class="built_in">SUM</span>(<span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> 成绩<span class="operator">&gt;=</span><span class="number">60</span> <span class="keyword">AND</span> 成绩<span class="operator">&lt;</span><span class="number">80</span> <span class="keyword">THEN</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span></span><br><span class="line">      ) <span class="keyword">AS</span> <span class="string">&#x27;[80-60]&#x27;</span>,</span><br><span class="line">  <span class="built_in">SUM</span>(<span class="keyword">CASE</span></span><br><span class="line">        <span class="keyword">WHEN</span> 成绩<span class="operator">&lt;</span><span class="number">60</span> <span class="keyword">THEN</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span></span><br><span class="line">      ) <span class="keyword">AS</span> <span class="string">&#x27;[&lt;60]&#x27;</span></span><br><span class="line"><span class="keyword">FROM</span> score <span class="keyword">AS</span> sc <span class="keyword">JOIN</span> course <span class="keyword">AS</span> c</span><br><span class="line"><span class="keyword">ON</span> sc.课程号 <span class="operator">=</span> c.课程号</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> sc.课程号, c.课程名称;</span><br></pre></td></tr></table></figure>
 
-<h1 id="3-修改数据和数据表"><a href="#3-修改数据和数据表" class="headerlink" title="3 修改数据和数据表"></a>3 修改数据和数据表</h1><p>基本的<code>UPDATE</code>语句由三部分组成：要更新的表，列名和它们的新值；确定要更新哪些行的过滤条件：</p>
+<h1 id="3-修改数据和数据表"><a href="#3-修改数据和数据表" class="headerlink" title="3 修改数据和数据表"></a>3 修改数据和数据表</h1><p>基本的<code>UPDATE</code>语句由三部分组成：要更新的表，列名和它们的新值，确定要更新哪些行的过滤条件：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> [tableName]</span><br><span class="line"><span class="keyword">SET</span> [field]</span><br><span class="line"><span class="keyword">WHERE</span> [<span class="keyword">condition</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">-- e.g.,</span></span><br><span class="line"><span class="keyword">UPDATE</span> student</span><br><span class="line"><span class="keyword">SET</span> 姓名<span class="operator">=</span><span class="string">&#x27;赵五&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> 学号<span class="operator">=</span><span class="string">&#x27;11&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
 <h1 id="4-删除数据和数据表"><a href="#4-删除数据和数据表" class="headerlink" title="4 删除数据和数据表"></a>4 删除数据和数据表</h1><h2 id="4-1-DELETE"><a href="#4-1-DELETE" class="headerlink" title="4.1 DELETE"></a>4.1 DELETE</h2><p>用于删除表中的特定数据：</p>
@@ -346,8 +346,8 @@
       <i class="fa fa-chevron-left"></i> Vim初学笔记（基于vimtutor）
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/56307/" rel="next" title="gdb初学笔记">
-      gdb初学笔记 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/52217/" rel="next" title="mits081-lab4">
+      mits081-lab4 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -424,7 +424,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
