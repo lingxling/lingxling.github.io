@@ -436,18 +436,18 @@
       </tags>
   </entry>
   <entry>
-    <title>MIT 6.S081 Lab3 Page Tables</title>
+    <title>MIT 6.S081 Lab4 Traps</title>
     <url>/2022/52217/</url>
     <content><![CDATA[<p>参考资料：</p>
 <ul>
 <li>课程官方网页：<a href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
 <li>xv6 book：<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
 <li>xv6手册中文版：<a href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
-<li>RISC-V unprivileged instructions：<a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf">https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf</a></li>
-<li>RISC-V privileged instructions：<a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf">https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf</a></li>
+<li><a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf">RISC-V unprivileged instructions</a></li>
+<li><a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf">RISC-V privileged instructions</a></li>
 <li>参考代码：<a href="https://blog.csdn.net/zwl1584671413/article/details/108379520">https://blog.csdn.net/zwl1584671413/article/details/108379520</a></li>
 <li>其他参考链接：<ul>
-<li>RISC-V 32位指令集介绍：<a href="https://blog.csdn.net/weixin_40377195/article/details/123647133">https://blog.csdn.net/weixin_40377195/article/details/123647133</a><span id="more"></span></li>
+<li><a href="https://blog.csdn.net/weixin_40377195/article/details/123647133">RISC-V 32位指令集介绍</a><span id="more"></span></li>
 </ul>
 </li>
 </ul>
