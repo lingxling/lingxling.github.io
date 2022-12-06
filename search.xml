@@ -375,10 +375,10 @@
 <li><code>user/user.h</code>中声明该函数</li>
 <li><code>user/usys.pl</code>中增加对应的syscall name</li>
 <li><code>kernel/syscall.h</code>中增加syscall number</li>
+<li><code>kernel/syscall.c</code>中增加指向新的系统函数的指针，并且可以修改<code>syscall</code>函数以配合sys_*的功能</li>
 <li><code>kernel/proc.h</code>的<strong>process</strong>结构中增加该syscall需要的变量</li>
 <li><code>kernel/sysproc.c</code>中实现sys_*函数，该函数用于处理调用sys_*后需要做的事情</li>
 <li><code>kernel/proc.c</code>中可以处理sys_*涉及到的变量在<strong>process</strong>中的使用</li>
-<li><code>kernel/syscall.c</code>中增加指向新的系统函数的指针，并且可以修改<code>syscall</code>函数以配合sys_*的功能</li>
 </ul>
 </li>
 <li>myproc可以用于获取当前正在运行的process</li>
@@ -392,8 +392,6 @@
 
 <p>根据题目提示，freemem函数在<code>kernel/kalloc.c</code>中实现，nproc函数在<code>kernel/proc.c</code>中实现：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/kalloc.c</span></span><br><span class="line">uint64 <span class="title function_">freemem</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span>;</span></span><br><span class="line">  uint64 sz = <span class="number">0</span>;</span><br><span class="line">  acquire(&amp;kmem.lock);</span><br><span class="line">  r = kmem.freelist;  <span class="comment">// freelist是第一个未被使用的页的地址</span></span><br><span class="line">  <span class="keyword">while</span> (r) &#123;</span><br><span class="line">    sz += <span class="number">1</span>;</span><br><span class="line">    r = r -&gt; next;</span><br><span class="line">  &#125;</span><br><span class="line">  sz = sz * PGSIZE;</span><br><span class="line">  release(&amp;kmem.lock);</span><br><span class="line">  <span class="keyword">return</span> sz;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// kernel/proc.c</span></span><br><span class="line">uint64 <span class="title function_">nproc</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  uint64 cnt = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NPROC; ++i) &#123;</span><br><span class="line">    <span class="keyword">if</span> (proc[i].state != UNUSED) ++cnt;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="2-3-总结"><a href="#2-3-总结" class="headerlink" title="2.3 总结"></a>2.3 总结</h2><p>无</p>
 ]]></content>
       <categories>
         <category>学习笔记</category>
@@ -429,6 +427,89 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">sys_pgaccess</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// lab pgtbl: your code here.</span></span><br><span class="line">  uint64 va;           <span class="comment">// va保存待检查的page数组的虚拟地址</span></span><br><span class="line">  <span class="type">int</span> page_num;        <span class="comment">// 要核验的page数</span></span><br><span class="line">  uint64 abits_addr;   <span class="comment">// abits从低到高记录page是否被访问过，abits_addr保存abits的地址</span></span><br><span class="line">  <span class="keyword">if</span> (argaddr(<span class="number">0</span>, &amp;va) &lt; <span class="number">0</span> || argint(<span class="number">1</span>, &amp;page_num) &lt; <span class="number">0</span> || argaddr(<span class="number">2</span>, &amp;abits_addr) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(va &gt;= MAXVA)</span><br><span class="line">    panic(<span class="string">&quot;walk&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="type">pagetable_t</span> pagetable = myproc() -&gt; pagetable;</span><br><span class="line">  uint mask = <span class="number">0</span>;  <span class="comment">// 内核数据</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; page_num; ++i, va += PGSIZE) &#123;</span><br><span class="line">    <span class="type">pte_t</span> *pte = <span class="number">0</span>;</span><br><span class="line">    <span class="type">pagetable_t</span> p = pagetable;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> level = <span class="number">2</span>; level &gt;= <span class="number">0</span>; --level) &#123;</span><br><span class="line">      <span class="comment">// PX根据level提取va对应的9bit的L0/L1/L2，即64bits只有最右9bit起作用，可以索引pagetable不越界</span></span><br><span class="line">      pte = &amp;p[PX(level, va)];  <span class="comment">// 根据L0/L1/L2获取页表中对应的pte，并取其地址</span></span><br><span class="line">      <span class="keyword">if</span>(*pte &amp; PTE_V)  <span class="comment">// 如果该PTE有效</span></span><br><span class="line">        p = (<span class="type">pagetable_t</span>)PTE2PA(*pte);  <span class="comment">// 找到次一级页表</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (*pte&amp;PTE_V &amp;&amp; *pte&amp;PTE_A) &#123;</span><br><span class="line">      mask = mask | (<span class="number">1L</span> &lt;&lt; i); </span><br><span class="line">      *pte &amp;= ~PTE_A;  <span class="comment">// 重置pte的PTE_A</span></span><br><span class="line">    &#125;    </span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (copyout(pagetable, abits_addr, (<span class="type">char</span>*)&amp;mask, <span class="keyword">sizeof</span>(uint64)) &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="3-3-总结"><a href="#3-3-总结" class="headerlink" title="3.3 总结"></a>3.3 总结</h2><p>在做这个实验时，我一直没搞明白<code>buf</code>到底指什么：它是pte？还是pagetable。后来读了参考代码才搞清楚，buf实际上就是大小为32个页的内存，当前进程的页表里有指向这些页的pte。</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>MIT 6.S081</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MIT 6.S081 Lab3 Page Tables</title>
+    <url>/2022/52217/</url>
+    <content><![CDATA[<p>参考资料：</p>
+<ul>
+<li>课程官方网页：<a href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
+<li>xv6 book：<a href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
+<li>xv6手册中文版：<a href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
+<li>RISC-V unprivileged instructions：<a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf">https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf</a></li>
+<li>RISC-V privileged instructions：<a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf">https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf</a></li>
+<li>参考代码：<a href="https://blog.csdn.net/zwl1584671413/article/details/108379520">https://blog.csdn.net/zwl1584671413/article/details/108379520</a></li>
+<li>其他参考链接：<ul>
+<li>RISC-V 32位指令集介绍：<a href="https://blog.csdn.net/weixin_40377195/article/details/123647133">https://blog.csdn.net/weixin_40377195/article/details/123647133</a><span id="more"></span></li>
+</ul>
+</li>
+</ul>
+<h1 id="1-RISC-V-assembly-easy"><a href="#1-RISC-V-assembly-easy" class="headerlink" title="1 RISC-V assembly (easy)"></a>1 RISC-V assembly (easy)</h1><ul>
+<li><code>auipc rd, immediate</code>：将32位立即数的高20位作为高位、低12位置0，然后与当前的PC值相加，将结果写入指定寄存器</li>
+<li><code>jal rd, offset</code>：直接跳转指令。该指令将下一条指令的地址<code>PC+4</code>存入<code>rd</code>寄存器（以备跳回），然后把PC设为当前值加上<code>offset</code>符号扩展的值（跳转地址），即对20位立即数<code>offset</code>做符号扩展，并左移一位，产生32bit的有符号，其跳转范围在±1MB</li>
+<li><code>jalr rd, offset(rs1)</code>：间接跳转指令。该指令将其后的指令地址<code>PC+4</code>存入目标寄存器中，然后其携带的12位立即数与寄存器<code>rs1</code>中的值相加，把计算出的地址的最低有效位置为0，存入PC寄存器（跳转的地址），其跳转范围为±2KB</li>
+<li>big-endian vs. little-endian：<br>big-endian将数据的高位存在低地址，例如，考虑一个32bit的16进制数字0x00001234（每个数位占用4bit，两个数位占用1Byte），它的低位数将会存在高地址，高位会存在低地址（所谓big-endian）。与之相反，little-endian是低位数存在低位，高位数存在高位（所谓little-endian）<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">big-endian   little-endian</span><br><span class="line">  high           high</span><br><span class="line"> | 34 |         | 00 |  </span><br><span class="line"> | 12 |         | 00 |</span><br><span class="line"> | 00 |         | 12 |        </span><br><span class="line"> | 00 |         | 34 |</span><br><span class="line">  low            low</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>读<code>call.asm</code>代码可以得到答案：</p>
+<ol>
+<li>Which registers contain arguments to functions? For example, which register holds 13 in main’s call to printf?</li>
+</ol>
+<ul>
+<li>根据<a href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf">RISC-V unprivileged instructions</a> Table 25.1，寄存器<code>a0-a7</code>用于保存函数的参数。在<code>call.asm</code>中，寄存器<code>a2</code>保存了参数<code>13</code></li>
+</ul>
+<ol start="2">
+<li>Where is the call to function f in the assembly code for main? Where is the call to g? (Hint: the compiler may inline functions.)</li>
+</ol>
+<ul>
+<li>没有具体的调用，编译器将f和g处理为inline function，直接产生函数调用的结果</li>
+</ul>
+<ol start="3">
+<li>At what address is the function printf located?</li>
+</ol>
+<ul>
+<li>根据第50行<code>34: 5f8080e7    jalr 1528(ra) # 628 &lt;printf&gt;</code>可知为0x628。也可以算出来：第49行<code>30:	00000097    auipc ra,0x0</code>将PC的值写入ra，即ra的值为<code>0x30</code>，与1528相加后得到跳转地址为<code>0x628</code>，再查询<code>call.asm</code>可知0x628是prinft的地址</li>
+</ul>
+<ol start="4">
+<li>What value is in the register ra just after the jalr to printf in main?</li>
+</ol>
+<ul>
+<li>PC+4</li>
+</ul>
+<ol start="5">
+<li>Run the following code.<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0x00646c72</span>;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;H%x Wo%s&quot;</span>, <span class="number">57616</span>, &amp;i);</span><br><span class="line">```      </span><br><span class="line">What is the output? Here<span class="number">&#x27;</span>s an ASCII table that maps bytes to characters.</span><br><span class="line">The output depends on that fact that the RISC-V is little-endian. If the RISC-V were instead big-endian what would you <span class="built_in">set</span> i to in order to yield the same output? Would you need to change <span class="number">57616</span> to a different value?</span><br><span class="line">- `<span class="number">57616</span>`对应<span class="number">16</span>进制数`<span class="number">0xe110</span>`，因此前半段输出`He110`。`<span class="type">unsigned</span> <span class="type">int</span>`是<span class="number">32b</span>it，相当于<span class="number">4</span>个<span class="type">char</span>字符，对照ASCII表，`<span class="number">0x64</span>`对应`d`，`<span class="number">0x6c</span>`对应`l`，`<span class="number">72</span>`对应`r`，同时考虑到RISC-V是little-endian，即低地址保存低位数据，所以后半段输出`World`。如果RISC-V是big-endian，那么`i=<span class="number">0x726c6400</span>`</span><br><span class="line"></span><br><span class="line"><span class="number">6.</span> In the following code, what is going to be printed after <span class="string">&#x27;y=&#x27;</span>? (note: the answer is not a specific value.) Why does this happen?</span><br><span class="line">```c</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;x=%d y=%d&quot;</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ul>
+<li><code>y=%d</code>中的<code>%d</code>会替换为a2寄存器中的值，当前a2寄存器中值不明确，所以答案不确定</li>
+</ul>
+<h1 id="2-Backtrace-moderate"><a href="#2-Backtrace-moderate" class="headerlink" title="2 Backtrace (moderate)"></a>2 Backtrace (moderate)</h1><p>任务要求实现<code>backtrace</code>函数，可以输出当前的函数调用栈。根据提示，首先在<code>kernel/defs.h</code>中添加函数声明，从而可以在<code>sys_sleep</code>中调用backtrace：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/defs.h</span></span><br><span class="line"><span class="type">void</span>            <span class="title function_">backtrace</span><span class="params">(<span class="type">void</span>)</span>;</span><br></pre></td></tr></table></figure>
+<p>然后在<code>kernel/riscv.h</code>中添加in-line assembly代码，用于将s0寄存器中的值读入到变量<code>x</code>中，s0寄存器就是fp寄存器：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/riscv.h</span></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> uint64</span><br><span class="line"><span class="title function_">r_fp</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 x;</span><br><span class="line">  <span class="keyword">asm</span> <span class="title function_">volatile</span><span class="params">(<span class="string">&quot;mv %0, s0&quot;</span> : <span class="string">&quot;=r&quot;</span> (x) )</span>;</span><br><span class="line">  <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，在<code>kernel/printf.c</code>中实现backtrace函数：根据 <a href="https://pdos.csail.mit.edu/6.828/2021/lec/l-riscv-slides.pdf">lecture notes</a> 中的提示，栈帧的返回地址是<code>*(fp-8)</code>，新栈帧的fp为<code>*(fp-16)</code>，xv6会在内核中为每个栈自动分配一个page，该page位于PAGE-aligned address，可以使用<code>PGROUNDDOWN(fp)</code>和<code>PGROUNDUP(fp)</code>计算栈的底部和顶部地址（栈帧回溯的终止条件）。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/printf.c</span></span><br><span class="line"><span class="type">void</span>  <span class="title function_">backtrace</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;backtrace:\n&quot;</span>);</span><br><span class="line">  uint64 fp = r_fp();</span><br><span class="line">  uint64 high = PGROUNDUP(fp);</span><br><span class="line">  <span class="keyword">while</span> (fp &lt; high) &#123;</span><br><span class="line">    uint64 ra = *(uint64 *)(fp<span class="number">-8</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, ra);</span><br><span class="line">    fp = *(uint64 *)(fp<span class="number">-16</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，根据要求，从<code>kernel/printf.c</code>中的panic函数和<code>kernel/sysproc.c</code>中的<code>sys_sleep</code>函数调用backtrace，以输出函数栈信息。</p>
+<h1 id="3-Alarm-hard"><a href="#3-Alarm-hard" class="headerlink" title="3 Alarm (hard)"></a>3 Alarm (hard)</h1><p>任务要求给xv6增加一个新功能：当进程使用CPU时，会收到周期性的警告。具体地说，需要新增<code>sigalarm(interval, handler)</code>系统调用。当应用调用<code>sigalarm</code>时，每当该应用使用<code>n</code>个CPU时间后，内核都需要将CPU控制权转给handler；当handler执行完毕后，CPU控制权转回原应用。特别地，当应用调用<code>sigalarm(0,0)</code>时，内核应该终止周期性的警告。</p>
+<p>首先，类似lab2在对应文件中添加内容以支持新的系统调用<code>sigalarm</code>和<code>sigreturn</code>：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// user/usys.pl</span></span><br><span class="line">entry(<span class="string">&quot;sigalarm&quot;</span>);</span><br><span class="line">entry(<span class="string">&quot;sigreturn&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// user/user.h</span></span><br><span class="line"><span class="type">int</span> <span class="title function_">sigalarm</span><span class="params">(<span class="type">int</span> ticks, <span class="type">void</span> (*handler)())</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">sigreturn</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// kernel/syscall.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SYS_sigalarm  22</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SYS_sigreturn 23</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// kernel/syscall.c</span></span><br><span class="line"><span class="keyword">extern</span> uint64 <span class="title function_">sys_sigalarm</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"><span class="keyword">extern</span> uint64 <span class="title function_">sys_sigreturn</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="title function_">uint64</span> <span class="params">(*syscalls[])</span><span class="params">(<span class="type">void</span>)</span> = &#123;</span><br><span class="line">...</span><br><span class="line">[SYS_sigalarm] sys_sigalarm,</span><br><span class="line">[SYS_sigreturn] sys_sigreturn,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后根据提示，在<code>struct proc</code>中添加如下信息并初始化：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/proc.h</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="type">int</span> interval;                <span class="comment">// alarm interval</span></span><br><span class="line">  <span class="type">void</span> (*handler) ();          <span class="comment">// pointer to the handler function</span></span><br><span class="line">  </span><br><span class="line">  <span class="type">int</span> passed_ticks;            <span class="comment">// ticks have passed since the last call to a process&#x27;s alarm handler</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">saved_info</span>;</span>  <span class="comment">// save the trapframe before running the handler function</span></span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> on_alarm;               <span class="comment">// whether CPU executes alarm function</span></span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// kernel/proc.c</span></span><br><span class="line"><span class="type">static</span> <span class="keyword">struct</span> proc*</span><br><span class="line"><span class="title function_">allocproc</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">if</span>((p-&gt;saved_info = (<span class="keyword">struct</span> trapframe *)kalloc()) == <span class="number">0</span>)&#123;</span><br><span class="line">    freeproc(p);</span><br><span class="line">    release(&amp;p-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  p-&gt;interval = <span class="number">0</span>;</span><br><span class="line">  p-&gt;passed_ticks = <span class="number">0</span>;</span><br><span class="line">  p-&gt;on_alarm = <span class="number">0</span>;</span><br><span class="line">  p-&gt;interval = <span class="number">0</span>;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类似lab3，进程申请了<code>trapframe</code>，结束时要在<code>freeproc</code>初始化内存：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/proc.c</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span></span><br><span class="line"><span class="title function_">freeproc</span><span class="params">(<span class="keyword">struct</span> proc *p)</span></span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">if</span>(p-&gt;saved_info)</span><br><span class="line">    kfree((<span class="type">void</span>*)p-&gt;saved_info);</span><br><span class="line">  p-&gt;saved_info = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  p-&gt;interval = <span class="number">0</span>;</span><br><span class="line">  p-&gt;passed_ticks = <span class="number">0</span>;</span><br><span class="line">  p-&gt;on_alarm = <span class="number">0</span>;</span><br><span class="line">  p-&gt;interval = <span class="number">0</span>;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第三步，是在<code>sys_sigalarm</code>和<code>sys_sigreturn</code>中实现参数读取：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// kernel/sysproc.c</span></span><br><span class="line">uint64 <span class="title function_">sys_sigalarm</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="type">int</span> interval;</span><br><span class="line">  uint64 handler;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (argint(<span class="number">0</span>, &amp;interval) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span> (argaddr(<span class="number">1</span>, &amp;handler) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  p-&gt;interval = interval;</span><br><span class="line">  p-&gt;handler = handler;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">uint64 <span class="title function_">sys_sigreturn</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> =</span> myproc();</span><br><span class="line">  *(p-&gt;trapframe) = *(p-&gt;saved_info);</span><br><span class="line">  p-&gt;on_alarm = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后一步，在<code>kernel/trap.c</code>中修改<code>trap</code>函数，使其能响应时钟中断：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">usertrap</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span>((which_dev = devintr()) != <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">// ok</span></span><br><span class="line">    <span class="keyword">if</span> (which_dev == <span class="number">2</span>) &#123;  <span class="comment">// timer interrupt</span></span><br><span class="line">      <span class="keyword">if</span> (p-&gt;passed_ticks == p-&gt;interval &amp;&amp; p-&gt;on_alarm == <span class="number">0</span>) &#123;</span><br><span class="line">        p-&gt;passed_ticks = <span class="number">0</span>;</span><br><span class="line">        *(p-&gt;saved_info) = *(p-&gt;trapframe);</span><br><span class="line">        <span class="comment">// 这里令p-&gt;trapframe-&gt;epc指向handler函数，</span></span><br><span class="line">        <span class="comment">// 使得trap结束后，程序计数器pc被p-&gt;trapframe-epc覆盖，执行的就是handler函数</span></span><br><span class="line">        p-&gt;trapframe-&gt;epc = (uint64)p-&gt;handler;</span><br><span class="line">        p-&gt;on_alarm = <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      p-&gt;passed_ticks += <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个实验中，<code>sys_sigalarm</code>的工作只是保存好interval和handler的值，<code>trap</code>函数中才真正地切换了当前占用CPU的函数，并且<code>sys_sigreturn</code>中则是恢复旧trapframe的值，使得pc可以按照原来的函数继续往下执行（注意在handler函数中一定要使用sigreturn函数返回，否则无法回到原函数继续执行）。</p>
 ]]></content>
       <categories>
         <category>学习笔记</category>
@@ -544,9 +625,9 @@
 </ul>
 <h1 id="2-Operating-system-organization"><a href="#2-Operating-system-organization" class="headerlink" title="2 Operating system organization"></a>2 Operating system organization</h1><h2 id="2-1-Abstracting-physical-resources"><a href="#2-1-Abstracting-physical-resources" class="headerlink" title="2.1 Abstracting physical resources"></a>2.1 Abstracting physical resources</h2><ul>
 <li>为什么需要operating system<ul>
-<li>为了简化开发，需要提供一套能将资源抽象化的方法。</li>
-<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须可靠且良好运行：需要适时放弃处理资源、并且程序不要出bug（一旦出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离。</li>
-<li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序。</li>
+<li>为了简化开发，需要提供一套能将资源抽象化的方法</li>
+<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须<strong>可靠</strong>且<strong>运行良好</strong>：需要适时放弃处理资源、并且程序不要出bug（一旦出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离</li>
+<li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序</li>
 </ul>
 </li>
 </ul>
@@ -582,14 +663,23 @@
 <li>The trampoline page：该page在虚拟地址空间的顶部。但是对应的物理页面在虚拟地址空间中映射了两次：一次在虚拟地址空间的顶部，一次直接映射。</li>
 <li>The kernel stack pages：每个进程都有自己的内核栈，进程之间的内核栈会被映射到偏高一些的位置，从而留下guard page的空间。guard page是保护页，当某个进程发生内核栈溢出时，保护其他进程的内核栈不被影响。注意，guard page不会浪费物理内存，它只是占据了虚拟地址空间的一段靠后的地址，但是并不映射到物理地址空间。<br><img data-src="/../images/xv6book/kernel_space.png"></li>
 </ul>
-<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始，可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。<br><img data-src="/../images/xv6book/user_space.png"></p>
+<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始，可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。</p>
+<p>下图展示了一个C程序的存储空间布局：</p>
+<ul>
+<li>text：由CPU执行的机器指令部分，通常是只读的，以防程序由于意外而修改指令</li>
+<li>initialized data：通常将此段称为数据段，存放了程序中明确地赋初值的普通全局变量和静态变量</li>
+<li>uninitialized data：又称BSS段（block started by symbol），存放了未明确赋初值的普通全局变量和静态变量。在程序未开始之前，内核将此段中的数据初始化为0或者空指针</li>
+<li>stack：自动变量以及每次函数调用时所需保存的的信息都存放在此段中。每次发生函数调用时，其返回地址以及调用者的调用环境（例如某些机器寄存器的值）都存在此段中。然后，最近被调用的函数在栈上为其自动和临时变量分配存储空间。每个函数使用的栈空间视为一个栈帧（stack frame），所有的栈帧就构成了这个程序完整的栈</li>
+<li>heap：通常在堆中进行动态存储分配，由程序员编写代码申请和释放<br><img data-src="/../images/xv6book/user_space2.png"></li>
+</ul>
+<p>在linux中，虚拟地址范围为0<del>4G，其中地址最高的1G分给内核使用，称为<strong>内核空间</strong>，较低的0</del>3G给用户进程使用，称为<strong>用户空间</strong>。最高的1GB虚拟内核空间为所有进程以及内核程序共享。内核空间和用户空间一般通过系统调用进行通信。</p>
 <h1 id="4-Traps-and-system-calls"><a href="#4-Traps-and-system-calls" class="headerlink" title="4 Traps and system calls"></a>4 Traps and system calls</h1><h2 id="4-1-RISC-V-trap-machinery"><a href="#4-1-RISC-V-trap-machinery" class="headerlink" title="4.1 RISC-V trap machinery"></a>4.1 RISC-V trap machinery</h2><p>内核通过向控制寄存器写入内容来告诉CPU如何处理trap，以下是最重要的一些寄存器概述。</p>
 <ul>
-<li><code>stvec</code>：内核在这里写入其trap处理程序的地址。</li>
-<li><code>sepc</code>：trap发生时，用于保存程序计数器pc。</li>
-<li><code>scause</code>：放置描述trap原因的数字。</li>
-<li><code>sscratch</code>：内核在这里放置一个值，这个值在trap处理程序一开始就会派上用场。</li>
-<li><code>sstatus</code>：<code>sstatus</code>中的SIE位控制设备中断是否启用。SPP位指示trap是来自用户模式还是管理模式。</li>
+<li><code>stvec</code>：内核在这里写入其trap处理程序的地址</li>
+<li><code>sepc</code>：trap发生时，用于保存程序计数器pc，pc本身则被<code>stvec</code>覆盖</li>
+<li><code>scause</code>：放置描述trap原因的数字</li>
+<li><code>sscratch</code>：内核在这里放置一个值，这个值在trap处理程序一开始就会派上用场</li>
+<li><code>sstatus</code>：<code>sstatus</code>中的SIE位控制设备中断是否启用。SPP位指示trap是来自用户模式还是管理模式</li>
 </ul>
 <h2 id="4-2-Traps-from-user-space"><a href="#4-2-Traps-from-user-space" class="headerlink" title="4.2 Traps from user space"></a>4.2 Traps from user space</h2><p>如果应用程序发出系统调用（<code>ecall</code>指令），或者做了非法的事情，或者设备产生终端（读写磁盘），那么在用户空间中执行时就可能产生trap。来自用户空间的trap的高级路径是：uservec（kernel&#x2F;trampoline.S:16），然后是usertrap（kernel&#x2F;trap.c:37）；返回时，先是usertrapret（kernel&#x2F;trap.c:90），然后是userret（kernel&#x2F;trampoline.S:16）。</p>
 <!--

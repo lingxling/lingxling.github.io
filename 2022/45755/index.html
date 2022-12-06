@@ -29,9 +29,9 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://lingxling.github.io/images/xv6book/va.png">
 <meta property="og:image" content="https://lingxling.github.io/images/xv6book/kernel_space.png">
-<meta property="og:image" content="https://lingxling.github.io/images/xv6book/user_space.png">
+<meta property="og:image" content="https://lingxling.github.io/images/xv6book/user_space2.png">
 <meta property="article:published_time" content="2022-11-05T08:57:49.000Z">
-<meta property="article:modified_time" content="2022-11-18T15:22:19.568Z">
+<meta property="article:modified_time" content="2022-12-06T05:14:52.236Z">
 <meta property="article:author" content="lxl">
 <meta property="article:tag" content="MIT 6.S081">
 <meta name="twitter:card" content="summary">
@@ -223,7 +223,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-11-18 23:22:19" itemprop="dateModified" datetime="2022-11-18T23:22:19+08:00">2022-11-18</time>
+                <time title="Modified: 2022-12-06 13:14:52" itemprop="dateModified" datetime="2022-12-06T13:14:52+08:00">2022-12-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -357,9 +357,9 @@
 </ul>
 <h1 id="2-Operating-system-organization"><a href="#2-Operating-system-organization" class="headerlink" title="2 Operating system organization"></a>2 Operating system organization</h1><h2 id="2-1-Abstracting-physical-resources"><a href="#2-1-Abstracting-physical-resources" class="headerlink" title="2.1 Abstracting physical resources"></a>2.1 Abstracting physical resources</h2><ul>
 <li>为什么需要operating system<ul>
-<li>为了简化开发，需要提供一套能将资源抽象化的方法。</li>
-<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须可靠且良好运行：需要适时放弃处理资源、并且程序不要出bug（一旦出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离。</li>
-<li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序。</li>
+<li>为了简化开发，需要提供一套能将资源抽象化的方法</li>
+<li>库函数方案的问题在于，当有多个应用程序运行时，这些程序必须<strong>可靠</strong>且<strong>运行良好</strong>：需要适时放弃处理资源、并且程序不要出bug（一旦出bug就可能影响到其他程序的运行）。人们通常希望提供比合作方案更强的隔离</li>
+<li>基于上述原因，人们需要操作系统用于为应用程序分配资源，因此应用程序只需考虑自身，不需要关注底层的硬件或者其他的应用程序</li>
 </ul>
 </li>
 </ul>
@@ -395,14 +395,23 @@
 <li>The trampoline page：该page在虚拟地址空间的顶部。但是对应的物理页面在虚拟地址空间中映射了两次：一次在虚拟地址空间的顶部，一次直接映射。</li>
 <li>The kernel stack pages：每个进程都有自己的内核栈，进程之间的内核栈会被映射到偏高一些的位置，从而留下guard page的空间。guard page是保护页，当某个进程发生内核栈溢出时，保护其他进程的内核栈不被影响。注意，guard page不会浪费物理内存，它只是占据了虚拟地址空间的一段靠后的地址，但是并不映射到物理地址空间。<br><img data-src="/../images/xv6book/kernel_space.png"></li>
 </ul>
-<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始，可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。<br><img data-src="/../images/xv6book/user_space.png"></p>
+<h2 id="3-3-Process-address-space"><a href="#3-3-Process-address-space" class="headerlink" title="3.3 Process address space"></a>3.3 Process address space</h2><p>一个进程的用户内存从虚拟地址0开始，可以增长到<code>MAXVA</code>，原则上允许一个进程内存寻址空间为256G。如果需要更多的用户内存，xv6首先使用<code>kalloc</code>分配物理页面，然后将对应的PTE加到进程页表中，使得进程可以通过PTE使用这个物理页面。</p>
+<p>下图展示了一个C程序的存储空间布局：</p>
+<ul>
+<li>text：由CPU执行的机器指令部分，通常是只读的，以防程序由于意外而修改指令</li>
+<li>initialized data：通常将此段称为数据段，存放了程序中明确地赋初值的普通全局变量和静态变量</li>
+<li>uninitialized data：又称BSS段（block started by symbol），存放了未明确赋初值的普通全局变量和静态变量。在程序未开始之前，内核将此段中的数据初始化为0或者空指针</li>
+<li>stack：自动变量以及每次函数调用时所需保存的的信息都存放在此段中。每次发生函数调用时，其返回地址以及调用者的调用环境（例如某些机器寄存器的值）都存在此段中。然后，最近被调用的函数在栈上为其自动和临时变量分配存储空间。每个函数使用的栈空间视为一个栈帧（stack frame），所有的栈帧就构成了这个程序完整的栈</li>
+<li>heap：通常在堆中进行动态存储分配，由程序员编写代码申请和释放<br><img data-src="/../images/xv6book/user_space2.png"></li>
+</ul>
+<p>在linux中，虚拟地址范围为0<del>4G，其中地址最高的1G分给内核使用，称为<strong>内核空间</strong>，较低的0</del>3G给用户进程使用，称为<strong>用户空间</strong>。最高的1GB虚拟内核空间为所有进程以及内核程序共享。内核空间和用户空间一般通过系统调用进行通信。</p>
 <h1 id="4-Traps-and-system-calls"><a href="#4-Traps-and-system-calls" class="headerlink" title="4 Traps and system calls"></a>4 Traps and system calls</h1><h2 id="4-1-RISC-V-trap-machinery"><a href="#4-1-RISC-V-trap-machinery" class="headerlink" title="4.1 RISC-V trap machinery"></a>4.1 RISC-V trap machinery</h2><p>内核通过向控制寄存器写入内容来告诉CPU如何处理trap，以下是最重要的一些寄存器概述。</p>
 <ul>
-<li><code>stvec</code>：内核在这里写入其trap处理程序的地址。</li>
-<li><code>sepc</code>：trap发生时，用于保存程序计数器pc。</li>
-<li><code>scause</code>：放置描述trap原因的数字。</li>
-<li><code>sscratch</code>：内核在这里放置一个值，这个值在trap处理程序一开始就会派上用场。</li>
-<li><code>sstatus</code>：<code>sstatus</code>中的SIE位控制设备中断是否启用。SPP位指示trap是来自用户模式还是管理模式。</li>
+<li><code>stvec</code>：内核在这里写入其trap处理程序的地址</li>
+<li><code>sepc</code>：trap发生时，用于保存程序计数器pc，pc本身则被<code>stvec</code>覆盖</li>
+<li><code>scause</code>：放置描述trap原因的数字</li>
+<li><code>sscratch</code>：内核在这里放置一个值，这个值在trap处理程序一开始就会派上用场</li>
+<li><code>sstatus</code>：<code>sstatus</code>中的SIE位控制设备中断是否启用。SPP位指示trap是来自用户模式还是管理模式</li>
 </ul>
 <h2 id="4-2-Traps-from-user-space"><a href="#4-2-Traps-from-user-space" class="headerlink" title="4.2 Traps from user space"></a>4.2 Traps from user space</h2><p>如果应用程序发出系统调用（<code>ecall</code>指令），或者做了非法的事情，或者设备产生终端（读写磁盘），那么在用户空间中执行时就可能产生trap。来自用户空间的trap的高级路径是：uservec（kernel&#x2F;trampoline.S:16），然后是usertrap（kernel&#x2F;trap.c:37）；返回时，先是usertrapret（kernel&#x2F;trap.c:90），然后是userret（kernel&#x2F;trampoline.S:16）。</p>
 <!--
@@ -557,7 +566,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
