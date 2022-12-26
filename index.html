@@ -183,6 +183,93 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/43055/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="lxl">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lingxling's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/43055/" class="post-title-link" itemprop="url">Bitcoin和Block chain新手笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-12-22 14:17:35" itemprop="dateCreated datePublished" datetime="2022-12-22T14:17:35+08:00">2022-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-12-26 21:57:25" itemprop="dateModified" datetime="2022-12-26T21:57:25+08:00">2022-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>在<a target="_blank" rel="noopener" href="https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/">How the Bitcoin protocol actually works</a>这篇博客中，作者设计了一种数字货币”infocoin”，并逐步完善其设计。本文是我读该博客的笔记。</p>
+</blockquote>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/">How the Bitcoin protocol actually works</a></li>
+<li><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/bitcoin.pdf">Bitcoin: A Peer-to-Peer Electronic Cash System</a></li>
+</ul>
+<p>初始的Infocin很简单，就是使用私钥加密message，以证明这条message（或者称之为digital currency）的发送方（付钱的人）是谁；同时在message中声明序列号（例如： “I, Alice, am giving Bob one infocoin, with serial number 8740348”），以避免网络重传导致的接收方（收钱的人）无法判断发送方想发几个货币的问题。这自然地导致一个问题：序列号怎么确定？即怎么避免“假钞”？一种方法是引入bank，由bank负责分配序列号和验证序列号等工作：<br><img data-src="/../images/bitcoin/b1.png"></p>
+<p>此时bank的权力将过于庞大，一种解决方案是让每个人都成为bank，保存所有infocoin的有关信息（账本），每个账本就是一个block，所有账本共同构成block chain：<br><img data-src="/../images/bitcoin/b2.png"></p>
+<p>上述分布式账本的设计自然地导致了一致性问题：Alice可以同时将message发给Bob和Charlie，而Bob和Charlie此时（账本没来得及更新）无法分辨这个infocoin已经被发给其他人了。为此，比特币设计了如下方案。</p>
+<p>接收方在接收之前，向整个网络广播这笔交易。然后，确认这条消息有效性的节点也广播消息。在得到大多数人的确认和广播后，这笔交易就成立，每个人都更新其账本。为了避免Alice伪造网络中的节点，需要使用<strong>proof-of-work</strong>的方法，即<strong>提高用户验证交易的成本、同时奖励帮助验证交易的行为</strong>。网络中的每个节点听到广播消息时，每个人都将其添加到已被告知但是尚未获得大多数确认的待处理事务队列中。在某个节点确认消息的有效性后，需要通过proof-of-work，才能使其他节点接受它的确认。具体地，节点可以通过找到使hash函数的输出小于等于给定的<strong>目标值</strong>的数去证明自身工作量。在比特币协议中，上述验证过程被称为<strong>挖矿</strong>，对于验证的每个交易块，成功的矿工都会获得比特币奖励。最初的奖励被设定为50比特币，每210000个验证块（大约每四年一次），奖励减半。</p>
+<p>每个块保存指向前一个块的指针（即前一个块的哈希值），用于确认交易顺序。由于网络延迟等原因，可能出现两个矿工同时验证一个块并广播的情况，此时可能有其他节点分别基于这两个块进行之后的验证。有一个简单的方法可以避免这个问题：矿工只关注其区块链副本中最长的分支，即当矿工发现有区块链有更长的分支后，将停止当前分支的工作，并切换到最长分支。在比特币协议中，交易需要满足以下两个条件才会被视为已确认：(1) 是 最长分支中的块的一部分 (2) 在最长分支中至少有5个块在它后面。</p>
+<p>上述设计避免了double spending的问题：如果Alice试图将相同的比特币分别给Bob和Charlie的问题，那么当Alice广播两笔交易时，最终只有一项会被确认；如果Alice试图将相同的比特币分别给自己和Charlie，为了使和Charlie的交易被确认，Alice需要等待这笔交易至少有5个块跟随，此时Alice和自身的交易的块所在分支很难跟得上Alice和Charlie的块所在分支。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/64510/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -557,7 +644,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-12-08 17:16:59" itemprop="dateModified" datetime="2022-12-08T17:16:59+08:00">2022-12-08</time>
+                <time title="Modified: 2022-12-08 18:10:44" itemprop="dateModified" datetime="2022-12-08T18:10:44+08:00">2022-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -587,7 +674,7 @@
 <li>xv6手册中文版：<a target="_blank" rel="noopener" href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf">RISC-V unprivileged instructions</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf">RISC-V privileged instructions</a></li>
-<li>参考代码：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zwl1584671413/article/details/108379520">https://blog.csdn.net/zwl1584671413/article/details/108379520</a></li>
+<li>参考代码：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38036381/article/details/122430157">https://blog.csdn.net/qq_38036381/article/details/122430157</a></li>
 <li>其他参考链接：<ul>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40377195/article/details/123647133">RISC-V 32位指令集介绍</a>
           <!--noindex-->
@@ -956,93 +1043,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/35594/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="lxl">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lingxling's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/35594/" class="post-title-link" itemprop="url">MIT 6.S081 Lab2 System Calls</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-10-11 21:34:56" itemprop="dateCreated datePublished" datetime="2022-10-11T21:34:56+08:00">2022-10-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-12-06 13:01:46" itemprop="dateModified" datetime="2022-12-06T13:01:46+08:00">2022-12-06</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>参考资料：</p>
-<ul>
-<li>课程官方网页：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/index.html">https://pdos.csail.mit.edu/6.S081/2021/index.html</a></li>
-<li>xv6 book：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf">https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf</a></li>
-<li>xv6手册中文版：<a target="_blank" rel="noopener" href="http://xv6.dgs.zone/">http://xv6.dgs.zone/</a></li>
-<li>参考代码：<a target="_blank" rel="noopener" href="https://github.com/PKUFlyingPig/MIT6.S081-2020fall">https://github.com/PKUFlyingPig/MIT6.S081-2020fall</a></li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/35594/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1114,7 +1114,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1127,7 +1127,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

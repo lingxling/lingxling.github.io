@@ -20,15 +20,24 @@
     var CONFIG = {"hostname":"lingxling.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="lingxling&#39;s blog">
-<meta property="og:url" content="https://lingxling.github.io/archives/2022/09/index.html">
+  <meta name="description" content="在How the Bitcoin protocol actually works这篇博客中，作者设计了一种数字货币”infocoin”，并逐步完善其设计。本文是我读该博客的笔记。  参考资料：  How the Bitcoin protocol actually works Bitcoin: A Peer-to-Peer Electronic Cash System  初始的Infocin很简单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bitcoin和Block chain新手笔记">
+<meta property="og:url" content="https://lingxling.github.io/2022/43055/index.html">
 <meta property="og:site_name" content="lingxling&#39;s blog">
+<meta property="og:description" content="在How the Bitcoin protocol actually works这篇博客中，作者设计了一种数字货币”infocoin”，并逐步完善其设计。本文是我读该博客的笔记。  参考资料：  How the Bitcoin protocol actually works Bitcoin: A Peer-to-Peer Electronic Cash System  初始的Infocin很简单">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://lingxling.github.io/images/bitcoin/b1.png">
+<meta property="og:image" content="https://lingxling.github.io/images/bitcoin/b2.png">
+<meta property="article:published_time" content="2022-12-22T06:17:35.000Z">
+<meta property="article:modified_time" content="2022-12-26T13:57:25.849Z">
 <meta property="article:author" content="lxl">
+<meta property="article:tag" content="bitcoin">
+<meta property="article:tag" content="blockchain">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lingxling.github.io/images/bitcoin/b1.png">
 
-<link rel="canonical" href="https://lingxling.github.io/archives/2022/09/">
+<link rel="canonical" href="https://lingxling.github.io/2022/43055/">
 
 
 <script id="page-configurations">
@@ -36,12 +45,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Archive | lingxling's blog</title>
+  <title>Bitcoin和Block chain新手笔记 | lingxling's blog</title>
   
 
 
@@ -177,56 +186,140 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 15 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://lingxling.github.io/2022/43055/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="lxl">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lingxling's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Bitcoin和Block chain新手笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-12-22 14:17:35" itemprop="dateCreated datePublished" datetime="2022-12-22T14:17:35+08:00">2022-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-12-26 21:57:25" itemprop="dateModified" datetime="2022-12-26T21:57:25+08:00">2022-12-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2022</span>
+        <blockquote>
+<p>在<a target="_blank" rel="noopener" href="https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/">How the Bitcoin protocol actually works</a>这篇博客中，作者设计了一种数字货币”infocoin”，并逐步完善其设计。本文是我读该博客的笔记。</p>
+</blockquote>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/">How the Bitcoin protocol actually works</a></li>
+<li><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/bitcoin.pdf">Bitcoin: A Peer-to-Peer Electronic Cash System</a></li>
+</ul>
+<p>初始的Infocin很简单，就是使用私钥加密message，以证明这条message（或者称之为digital currency）的发送方（付钱的人）是谁；同时在message中声明序列号（例如： “I, Alice, am giving Bob one infocoin, with serial number 8740348”），以避免网络重传导致的接收方（收钱的人）无法判断发送方想发几个货币的问题。这自然地导致一个问题：序列号怎么确定？即怎么避免“假钞”？一种方法是引入bank，由bank负责分配序列号和验证序列号等工作：<br><img data-src="/../images/bitcoin/b1.png"></p>
+<p>此时bank的权力将过于庞大，一种解决方案是让每个人都成为bank，保存所有infocoin的有关信息（账本），每个账本就是一个block，所有账本共同构成block chain：<br><img data-src="/../images/bitcoin/b2.png"></p>
+<p>上述分布式账本的设计自然地导致了一致性问题：Alice可以同时将message发给Bob和Charlie，而Bob和Charlie此时（账本没来得及更新）无法分辨这个infocoin已经被发给其他人了。为此，比特币设计了如下方案。</p>
+<p>接收方在接收之前，向整个网络广播这笔交易。然后，确认这条消息有效性的节点也广播消息。在得到大多数人的确认和广播后，这笔交易就成立，每个人都更新其账本。为了避免Alice伪造网络中的节点，需要使用<strong>proof-of-work</strong>的方法，即<strong>提高用户验证交易的成本、同时奖励帮助验证交易的行为</strong>。网络中的每个节点听到广播消息时，每个人都将其添加到已被告知但是尚未获得大多数确认的待处理事务队列中。在某个节点确认消息的有效性后，需要通过proof-of-work，才能使其他节点接受它的确认。具体地，节点可以通过找到使hash函数的输出小于等于给定的<strong>目标值</strong>的数去证明自身工作量。在比特币协议中，上述验证过程被称为<strong>挖矿</strong>，对于验证的每个交易块，成功的矿工都会获得比特币奖励。最初的奖励被设定为50比特币，每210000个验证块（大约每四年一次），奖励减半。</p>
+<p>每个块保存指向前一个块的指针（即前一个块的哈希值），用于确认交易顺序。由于网络延迟等原因，可能出现两个矿工同时验证一个块并广播的情况，此时可能有其他节点分别基于这两个块进行之后的验证。有一个简单的方法可以避免这个问题：矿工只关注其区块链副本中最长的分支，即当矿工发现有区块链有更长的分支后，将停止当前分支的工作，并切换到最长分支。在比特币协议中，交易需要满足以下两个条件才会被视为已确认：(1) 是 最长分支中的块的一部分 (2) 在最长分支中至少有5个块在它后面。</p>
+<p>上述设计避免了double spending的问题：如果Alice试图将相同的比特币分别给Bob和Charlie的问题，那么当Alice广播两笔交易时，最终只有一项会被确认；如果Alice试图将相同的比特币分别给自己和Charlie，为了使和Charlie的交易被确认，Alice需要等待这笔交易至少有5个块跟随，此时Alice和自身的交易的块所在分支很难跟得上Alice和Charlie的块所在分支。</p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
+        
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-09-24T14:43:08+08:00"
-              content="2022-09-24">
-          09-24
-        </time>
-      </div>
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>lxl
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://lingxling.github.io/2022/43055/" title="Bitcoin和Block chain新手笔记">https://lingxling.github.io/2022/43055/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2022/35075/" itemprop="url">
-            <span itemprop="name">MIT 6.S081 Lab1 Utilities</span>
-          </a>
-      </div>
 
-    </header>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/bitcoin/" rel="tag"># bitcoin</a>
+              <a href="/tags/blockchain/" rel="tag"># blockchain</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/64510/" rel="prev" title="Docker新手笔记">
+      <i class="fa fa-chevron-left"></i> Docker新手笔记
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -423,6 +516,25 @@
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'e02cfbae05b03cacb114',
+      clientSecret: '26906bf85a5c1f43c3d6ae205ba1f3c7cbf961e1',
+      repo        : 'lingxling.github.io',
+      owner       : 'lingxling',
+      admin       : ['lingxling'],
+      id          : '7d232461030a2dd88559402d61099323',
+        language: 'en',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
 </body>
 </html>
