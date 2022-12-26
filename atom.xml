@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>lingxling&#39;s blog</title>
+  
+  
+  <link href="https://lingxling.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://lingxling.github.io/"/>
+  <updated>2022-12-26T14:25:38.544Z</updated>
+  <id>https://lingxling.github.io/</id>
+  
+  <author>
+    <name>lxl</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Bitcoin和Block chain新手笔记</title>
+    <link href="https://lingxling.github.io/2022/43055/"/>
+    <id>https://lingxling.github.io/2022/43055/</id>
+    <published>2022-12-22T06:17:35.000Z</published>
+    <updated>2022-12-26T14:25:38.544Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;在&lt;a href=&quot;https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/&quot;&gt;How the Bitcoin protocol actually works&lt;/a&gt;这篇博客中，作者设计了一种数字货币”infocoin”，并逐步完善其设计。本文是我读该博客的笔记。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://michaelnielsen.org/ddi/how-the-bitcoin-protocol-actually-works/&quot;&gt;How the Bitcoin protocol actually works&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://pdos.csail.mit.edu/6.824/papers/bitcoin.pdf&quot;&gt;Bitcoin: A Peer-to-Peer Electronic Cash System&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="bitcoin" scheme="https://lingxling.github.io/tags/bitcoin/"/>
+    
+    <category term="blockchain" scheme="https://lingxling.github.io/tags/blockchain/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Docker新手笔记</title>
+    <link href="https://lingxling.github.io/2022/64510/"/>
+    <id>https://lingxling.github.io/2022/64510/</id>
+    <published>2022-11-19T02:57:49.000Z</published>
+    <updated>2022-11-22T10:31:29.334Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;官方文档：&lt;a href=&quot;https://docs.docker.com/&quot;&gt;https://docs.docker.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Docker新手课程：&lt;a href=&quot;https://kodekloud.com/courses/docker-for-the-absolute-beginner/&quot;&gt;https://kodekloud.com/courses/docker-for-the-absolute-beginner/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;其他参考来源：&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://baike.baidu.com/item/hypervisor/3353492?fr=aladdin#2_4&quot;&gt;百度百科：hypervisor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/qunyaoaiziji/article/details/106222328&quot;&gt;容器 &amp;amp; Docker &amp;amp; Docker镜像 &amp;amp; Docker容器的关系和区别&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/qq_47042899/article/details/122329491&quot;&gt;docker运行容器命令中-it是什么意思&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.runoob.com/docker/docker-dockerfile.html&quot;&gt;Docker Dockerfile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://mp.weixin.qq.com/s?__biz=MzU0NDc4NjA0MQ==&amp;mid=2247485082&amp;idx=1&amp;sn=9408123ececeed9ab56893546cda31ee&amp;chksm=fb77958ccc001c9aadcf4f32093e4449a0bef95650b6a54f634932eca795097dde59d2879062&amp;token=399001106&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;Docker Compose&lt;/a&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="Docker" scheme="https://lingxling.github.io/tags/Docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MIT 6.S081 学习总结（updating）</title>
+    <link href="https://lingxling.github.io/2022/45755/"/>
+    <id>https://lingxling.github.io/2022/45755/</id>
+    <published>2022-11-05T08:57:49.000Z</published>
+    <updated>2022-12-07T04:23:57.669Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;课程官方网页：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/index.html&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6 book：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6手册中文版：&lt;a href=&quot;http://xv6.dgs.zone/&quot;&gt;http://xv6.dgs.zone/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考书：《UNIX环境高级编程（第3版）》</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="MIT 6.S081" scheme="https://lingxling.github.io/tags/MIT-6-S081/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>makefile初学笔记</title>
+    <link href="https://lingxling.github.io/2022/60804/"/>
+    <id>https://lingxling.github.io/2022/60804/</id>
+    <published>2022-11-05T08:56:00.000Z</published>
+    <updated>2022-11-13T09:27:08.405Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://makefiletutorial.com/#static-pattern-rules&quot;&gt;https://makefiletutorial.com/#static-pattern-rules&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/oqqHuTu12345678/article/details/125617988&quot;&gt;https://blog.csdn.net/oqqHuTu12345678/article/details/125617988&lt;/a&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="makefile" scheme="https://lingxling.github.io/tags/makefile/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>gdb初学笔记</title>
+    <link href="https://lingxling.github.io/2022/56307/"/>
+    <id>https://lingxling.github.io/2022/56307/</id>
+    <published>2022-11-05T08:55:39.000Z</published>
+    <updated>2022-11-13T09:27:08.385Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;读书时学过怎么用gdb，但是因为不常用很快忘光了。由于某些环境下只能用gdb调试，所以现在再次学习总结一下gdb。&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="gdb" scheme="https://lingxling.github.io/tags/gdb/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MIT 6.S081 Lab4 Traps</title>
+    <link href="https://lingxling.github.io/2022/52217/"/>
+    <id>https://lingxling.github.io/2022/52217/</id>
+    <published>2022-11-05T08:53:56.000Z</published>
+    <updated>2022-12-08T10:10:44.732Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;课程官方网页：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/index.html&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6 book：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6手册中文版：&lt;a href=&quot;http://xv6.dgs.zone/&quot;&gt;http://xv6.dgs.zone/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-spec.pdf&quot;&gt;RISC-V unprivileged instructions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/riscv/riscv-isa-manual/releases/download/draft-20200727-8088ba4/riscv-privileged.pdf&quot;&gt;RISC-V privileged instructions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考代码：&lt;a href=&quot;https://blog.csdn.net/qq_38036381/article/details/122430157&quot;&gt;https://blog.csdn.net/qq_38036381/article/details/122430157&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;其他参考链接：&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/weixin_40377195/article/details/123647133&quot;&gt;RISC-V 32位指令集介绍&lt;/a&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="MIT 6.S081" scheme="https://lingxling.github.io/tags/MIT-6-S081/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>SQL语句速成</title>
+    <link href="https://lingxling.github.io/2022/63903/"/>
+    <id>https://lingxling.github.io/2022/63903/</id>
+    <published>2022-10-27T12:01:09.000Z</published>
+    <updated>2022-11-18T15:24:59.989Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;工作中时不时要用到SQL语句，根据SQL经典50题复习下SQL语句的用法。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://zhuanlan.zhihu.com/p/38354000&quot;&gt;图解SQL面试题：经典50题&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/m0_56869501/article/details/121011304&quot;&gt;inner join 、left join 、right join 和full join的区别&lt;/a&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="SQL" scheme="https://lingxling.github.io/tags/SQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Vim初学笔记（基于vimtutor）</title>
+    <link href="https://lingxling.github.io/2022/19295/"/>
+    <id>https://lingxling.github.io/2022/19295/</id>
+    <published>2022-10-24T13:49:04.000Z</published>
+    <updated>2022-10-29T14:27:17.399Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;之前一直觉得vim难用，远远比不上vscode之类的编辑器好用。最近在学Java后端开发，敲代码的时候居然感觉vim编辑器好像是方便一些，所以打算再复习一下。以下笔记仅供查阅。&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="Vim" scheme="https://lingxling.github.io/tags/Vim/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MIT 6.S081 Lab3 Page Tables</title>
+    <link href="https://lingxling.github.io/2022/29909/"/>
+    <id>https://lingxling.github.io/2022/29909/</id>
+    <published>2022-10-19T12:19:03.951Z</published>
+    <updated>2022-11-12T06:28:08.540Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;课程官方网页：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/index.html&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6 book：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6手册中文版：&lt;a href=&quot;http://xv6.dgs.zone/&quot;&gt;http://xv6.dgs.zone/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考代码：&lt;a href=&quot;https://blog.csdn.net/qq_33894666/article/details/121625097&quot;&gt;https://blog.csdn.net/qq_33894666/article/details/121625097&lt;/a&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="MIT 6.S081" scheme="https://lingxling.github.io/tags/MIT-6-S081/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git初学笔记</title>
+    <link href="https://lingxling.github.io/2022/22760/"/>
+    <id>https://lingxling.github.io/2022/22760/</id>
+    <published>2022-10-18T11:17:56.000Z</published>
+    <updated>2022-11-05T08:54:43.326Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;为了便于日常的查询和使用，将一些git命令总结这篇博客中。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用可视化的方法学习git：&lt;a href=&quot;https://learngitbranching.js.org/?locale=zh_CN&quot;&gt;https://learngitbranching.js.org/?locale=zh_CN&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;官方文档：&lt;a href=&quot;https://git-scm.com/docs/gittutorial&quot;&gt;https://git-scm.com/docs/gittutorial&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="git" scheme="https://lingxling.github.io/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MIT 6.S081 Lab2 System Calls</title>
+    <link href="https://lingxling.github.io/2022/35594/"/>
+    <id>https://lingxling.github.io/2022/35594/</id>
+    <published>2022-10-11T13:34:56.000Z</published>
+    <updated>2022-12-06T05:01:46.416Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;课程官方网页：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/index.html&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6 book：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6手册中文版：&lt;a href=&quot;http://xv6.dgs.zone/&quot;&gt;http://xv6.dgs.zone/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考代码：&lt;a href=&quot;https://github.com/PKUFlyingPig/MIT6.S081-2020fall&quot;&gt;https://github.com/PKUFlyingPig/MIT6.S081-2020fall&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="MIT 6.S081" scheme="https://lingxling.github.io/tags/MIT-6-S081/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MIT 6.S081 Lab1 Utilities</title>
+    <link href="https://lingxling.github.io/2022/35075/"/>
+    <id>https://lingxling.github.io/2022/35075/</id>
+    <published>2022-09-24T06:43:08.000Z</published>
+    <updated>2022-11-02T15:14:25.688Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;课程官方网页：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/index.html&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6 book：&lt;a href=&quot;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&quot;&gt;https://pdos.csail.mit.edu/6.S081/2021/xv6/book-riscv-rev2.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;xv6手册中文版：&lt;a href=&quot;http://xv6.dgs.zone/&quot;&gt;http://xv6.dgs.zone/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考代码：&lt;a href=&quot;http://doraemonzzz.com/tags/6-S081/&quot;&gt;http://doraemonzzz.com/tags/6-S081/&lt;/a&gt;，以下代码主要参考该工作。</summary>
+    
+    
+    
+    <category term="学习笔记" scheme="https://lingxling.github.io/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    
+    
+    <category term="MIT 6.S081" scheme="https://lingxling.github.io/tags/MIT-6-S081/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用树莓派3b搭建个人网盘</title>
+    <link href="https://lingxling.github.io/2022/15837/"/>
+    <id>https://lingxling.github.io/2022/15837/</id>
+    <published>2022-08-13T14:59:45.000Z</published>
+    <updated>2022-08-18T03:00:42.886Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;在淘宝上花10块钱搞了一大堆电子书，打算用树莓派3b搞个个人网盘存起来。虽然网口速度不行，但是一本书也就2MB左右，问题不大。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;参考1：&lt;a href=&quot;https://blog.csdn.net/lz_quiet/article/details/103651730&quot;&gt;私有云搭建-owncloud&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="杂记" scheme="https://lingxling.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
+    
+    
+    <category term="树莓派" scheme="https://lingxling.github.io/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何在电脑上操作手机</title>
+    <link href="https://lingxling.github.io/2022/8240/"/>
+    <id>https://lingxling.github.io/2022/8240/</id>
+    <published>2022-08-13T14:47:36.000Z</published>
+    <updated>2022-08-18T03:00:50.766Z</updated>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;手机进了水，能开机，想把手机上的资料都备份一下。但是因为屏幕花了看得很吃力、不方便，所以打算在电脑上操作手机。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;参考1：&lt;a href=&quot;https://www.zhihu.com/question/46795475/answer/869985800&quot;&gt;如何在电脑上控制手机上所有的app软件操作？ - 张脑湿的回答 - 知乎&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="杂记" scheme="https://lingxling.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
+    
+    
+    <category term="tips" scheme="https://lingxling.github.io/tags/tips/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hexo + NexT 搭建个人博客</title>
+    <link href="https://lingxling.github.io/2022/63969/"/>
+    <id>https://lingxling.github.io/2022/63969/</id>
+    <published>2022-08-13T14:38:16.000Z</published>
+    <updated>2022-11-05T08:43:11.676Z</updated>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;1-主要安装步骤&quot;&gt;&lt;a href=&quot;#1-主要安装步骤&quot; class=&quot;headerlink&quot; title=&quot;1 主要安装步骤&quot;&gt;&lt;/a&gt;1 主要安装步骤&lt;/h1&gt;&lt;h2 id=&quot;1-1-创建github仓库&quot;&gt;&lt;a href=&quot;#1-1-创建github仓库&quot; class=&quot;headerlink&quot; title=&quot;1.1 创建github仓库&quot;&gt;&lt;/a&gt;1.1 创建github仓库&lt;/h2&gt;&lt;p&gt;仓库命名：[username].github.io&lt;/p&gt;
+&lt;h2 id=&quot;1-2-安装博客框架Hexo&quot;&gt;&lt;a href=&quot;#1-2-安装博客框架Hexo&quot; class=&quot;headerlink&quot; title=&quot;1.2 安装博客框架Hexo&quot;&gt;&lt;/a&gt;1.2 安装博客框架Hexo&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://hexo.io/zh-cn/docs/&quot;&gt;Hexo安装文档&lt;/a&gt;。在站点配置文件中，deploy字段修改为：&lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;deploy:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  type: git&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  repository: git@github.com:[username]/[username].github.io.git&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  branch: main&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    <category term="杂记" scheme="https://lingxling.github.io/categories/%E6%9D%82%E8%AE%B0/"/>
+    
+    
+    <category term="Hexo" scheme="https://lingxling.github.io/tags/Hexo/"/>
+    
+    <category term="NexT" scheme="https://lingxling.github.io/tags/NexT/"/>
+    
+  </entry>
+  
+</feed>
